@@ -5,14 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour
 {
-    private Scene scene;
     private bool settingsOpen;
 
-    //public GameObject settingsMenu;
+    public GameObject settingsMenu;
 
     private void Start()
     {
-        //settingsMenu.SetActive(false);
+        settingsOpen = false;
+        settingsMenu.SetActive(settingsOpen);
     }
 
     public void PlayGame()
@@ -27,7 +27,7 @@ public class Menus : MonoBehaviour
 
     public void SettingsMenu()
     {
-        //settingsOpen = !settingsOpen;
-        //settingsMenu.SetActive(settingsOpen);
+        settingsOpen = !settingsOpen;
+        settingsMenu.SetActive(settingsOpen);
     }
 }

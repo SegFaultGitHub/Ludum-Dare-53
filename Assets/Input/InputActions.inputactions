@@ -28,6 +28,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Conveyors",
+            "id": "4b400cbe-fec1-4b06-87f8-5113bc71b648",
+            "actions": [
+                {
+                    "name": "Drag",
+                    "type": "Button",
+                    "id": "5754d5af-f18d-4192-9446-6827100a8835",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f8c7fcc7-20e6-48e9-a8ac-623ec7f88113",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Drag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
