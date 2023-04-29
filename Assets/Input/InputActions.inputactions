@@ -1,0 +1,40 @@
+{
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "Globals",
+            "id": "d556ddd8-2765-4aa2-a424-245526b3aff3",
+            "actions": [
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "ca31942f-be24-41ab-8021-56a459653918",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "bb2b1cc2-347d-46c9-9d4a-8d267ffb6e78",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Global",
+            "bindingGroup": "Global",
+            "devices": []
+        }
+    ]
+}
