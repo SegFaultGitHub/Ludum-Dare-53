@@ -1,4 +1,5 @@
 using System;
+using Code.Conveyors;
 using UnityEngine;
 
 namespace Code {
@@ -12,9 +13,6 @@ namespace Code {
         [field: SerializeField] private GameObject Arrows;
 
         private LTDescr RotateTween;
-
-        // True when there is a box on the conveyor
-        private bool Occupied;
 
         private void Awake() {
             ParticleSystem[] particles = this.Arrows.GetComponentsInChildren<ParticleSystem>();
@@ -44,7 +42,7 @@ namespace Code {
         }
 
         public void MockRotate(Direction direction) {
-            if (this.Locked || this.Occupied || this.DisplayedDirection == direction) return;
+            if (this.Locked || this.DisplayedDirection == direction) return;
 
             this.DisplayedDirection = direction;
 
@@ -61,13 +59,23 @@ namespace Code {
         }
 
         public void ApplyRotation() {
-            if (this.Locked || this.Occupied) {
+            if (this.Locked) {
                 this.MockRotate(this.Direction);
                 return;
             }
 
             this.Direction = this.DisplayedDirection;
             this.MockRotate(this.Direction);
+        }
+
+        public Vector3 GetForce() {
+            return this.Direction switch {
+                Direction.Up => new Vector3(0, 0, 1),
+                Direction.Down => new Vector3(0, 0, -1),
+                Direction.Left => new Vector3(-1, 0, 0),
+                Direction.Right => new Vector3(1, 0, 0),
+                _ => throw new Exception($"[Conveyor:ApplyForce] Unexpected direction {this.Direction}")
+            };
         }
     }
 }
