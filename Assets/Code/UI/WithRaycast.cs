@@ -5,42 +5,40 @@ namespace Code.UI {
 
         private static readonly RaycastHit[] RAYCAST_HITS = new RaycastHit[10];
 
-        protected UnityEngine.Camera Camera;
+        protected Camera Camera;
         protected Vector2 MousePosition, MousePositionDelta;
 
         protected virtual void Start() {
-            this.Camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<UnityEngine.Camera>();
+            this.Camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         }
 
         protected virtual void Update() {
             this.HandleInput();
         }
 
-        protected Hit<T> Raycast<T>(LayerMask layer) {
+        protected Hit<T>? Raycast<T>(LayerMask layer) {
             for (int i = 0; i < RAYCAST_HITS.Length; i++) RAYCAST_HITS[i] = default;
             Physics.RaycastNonAlloc(this.Camera.ScreenPointToRay(this.MousePosition), RAYCAST_HITS, 1000, layer);
 
             float minDistance = float.MaxValue;
-            T result = default;
+            RaycastHit? result = null;
             foreach (RaycastHit hit in RAYCAST_HITS) {
-                if (hit.collider is null)
-                    return new Hit<T> {
-                        Distance = minDistance,
-                        Obj = result
-                    };
-                if (minDistance < hit.distance)
-                    continue;
+                if (hit.collider is null) break;
+                if (hit.collider.GetComponentInParent<T>() == null) continue;
+                if (minDistance < hit.distance) continue;
+
                 minDistance = hit.distance;
-                T current = hit.collider.GetComponentInParent<T>();
-                if (current is not null) result = current;
+                result = hit;
             }
+
+            if (result == null) return null;
             return new Hit<T> {
-                Distance = minDistance,
-                Obj = result
+                RaycastHit = result.Value,
+                Obj = result.Value.collider.GetComponentInParent<T>()
             };
         }
         protected struct Hit<T> {
-            public float Distance;
+            public RaycastHit RaycastHit;
             public T Obj;
         }
 
