@@ -1,0 +1,282 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Code.Extensions;
+using Code.UI;
+using UnityEngine;
+
+namespace Code.Conveyors {
+    public enum Mode {
+        Placement,
+        Edition,
+        Destruction
+    }
+
+    public class ConveyorsManager : WithRaycast {
+        [field: SerializeField] private LayerMask ConveyorLayer;
+        [field: SerializeField] private LayerMask ConveyorPlaneLayer;
+        [field: SerializeField] private LayerMask GroundPlaneLayer;
+        private Conveyor Conveyor;
+        private Vector3 DragPositionStart;
+
+        [field: SerializeField] private Conveyor ConveyorPrefab;
+        [field: SerializeField] private Conveyor PhantomConveyor;
+        private Dictionary<Vector2Int, Conveyor> Conveyors;
+
+        [field: SerializeField] private Mode Mode;
+        private Mode MasterMode;
+        private bool ModeLocked;
+        private Direction Direction;
+        private Vector2Int PhantomPosition;
+        private LTDescr EnablePhantomTween, MovePhantomTween;
+        private bool PhantomEnabled;
+
+        protected override void Start() {
+            base.Start();
+            this.Conveyors = new Dictionary<Vector2Int, Conveyor>();
+            this.NewPhantom();
+        }
+
+        protected override void Update() {
+            base.Update();
+            this.GatherInput();
+
+            if (this.Input.SwitchToDestruction) {
+                this.MasterMode = Mode.Destruction;
+                this.SwitchMode(Mode.Destruction);
+            } else if (this.Input.SwitchToEdition) {
+                this.MasterMode = Mode.Edition;
+                this.SwitchMode(Mode.Edition);
+            } else if (this.Input.SwitchToPlacement) {
+                this.MasterMode = Mode.Placement;
+                this.SwitchMode(Mode.Placement);
+            }
+
+            switch (this.Mode) {
+                case Mode.Placement:
+                    this.PlacementBehaviour();
+                    break;
+                case Mode.Edition:
+                    this.EditionBehaviour();
+                    break;
+                case Mode.Destruction:
+                    this.DestructionBehaviour();
+                    break;
+                default:
+                    throw new Exception($"[ConveyorsRayCast:Update] Unexpected mode {this.Mode}");
+            }
+        }
+
+        private void SwitchMode(Mode mode) {
+            if (this.Mode == mode) return;
+
+            this.Mode = mode;
+
+            switch (this.Mode) {
+                case Mode.Placement:
+                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    this.NewPhantom();
+                    break;
+                case Mode.Edition:
+                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    this.HidePhantom();
+                    if (this.PhantomConveyor != null)
+                        this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
+                    break;
+                case Mode.Destruction:
+                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    this.HidePhantom();
+                    if (this.PhantomConveyor != null)
+                        this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
+                    break;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void PlacementBehaviour() {
+            if (this.Input.DragPerformed && this.PhantomEnabled) {
+                this.Conveyor = this.PhantomConveyor;
+                this.Conveyor.ShowArrow();
+                this.Conveyor.GridPosition = this.PhantomPosition;
+                this.Mode = Mode.Edition;
+                this.EditionBehaviour();
+                return;
+            }
+
+            Hit<Plane>? hit = this.Raycast<Plane>(this.GroundPlaneLayer);
+
+            if (hit == null) throw new Exception("[ConveyorsRayCast:PlacementBehaviour] No plane hit");
+
+            Vector3 point = hit.Value.RaycastHit.point;
+            if (point.x < 0) point.x -= 1;
+            if (point.z < 0) point.z -= 1;
+            Vector2Int position = new((int)(point.x + .5f), (int)(point.z + .5f));
+            if (!this.ValidPosition(this.PhantomConveyor, this.PhantomConveyor.Direction, position)) {
+                this.HidePhantom();
+                return;
+            }
+
+            point = new Vector3(position.x, 0, position.y);
+            this.ShowPhantom(point);
+
+            if (position == this.PhantomPosition) return;
+
+            if (this.MovePhantomTween != null) LeanTween.cancel(this.MovePhantomTween.id);
+            this.MovePhantomTween = LeanTween.move(this.PhantomConveyor.gameObject, point, 0.05f)
+                .setEaseOutQuad()
+                .setOnComplete(() => this.MovePhantomTween = null);
+            this.PhantomPosition = position;
+        }
+
+        private void EditionBehaviour() {
+            Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
+            if (this.Input.DragPerformed && this.Conveyor != null) {
+                Hit<Plane>? planeHit = this.Raycast<Plane>(this.ConveyorPlaneLayer);
+                if (planeHit == null) throw new Exception("[ConveyorsRayCast:EditionBehaviour] No plane hit");
+                this.DragPositionStart = planeHit.Value.RaycastHit.point;
+            } else if (this.Input.DragInProgress && this.Conveyor != null) {
+                Hit<Plane>? planeHit = this.Raycast<Plane>(this.ConveyorPlaneLayer);
+                if (planeHit == null) throw new Exception("[ConveyorsRayCast:EditionBehaviour] No plane hit");
+                Vector3 diff = this.DragPositionStart - planeHit.Value.RaycastHit.point;
+                if (diff.magnitude > .5f) {
+                    float angle = Vector3.SignedAngle(diff, Vector3.left, Vector3.up);
+                    Direction direction = angle switch {
+                        >= -45 and <= 45 => Direction.Right,
+                        >= 45 and <= 135 => Direction.Up,
+                        >= 135 or <= -135 => Direction.Left,
+                        <= -45 and >= -135 => Direction.Down,
+                        _ => this.Direction
+                    };
+                    if (this.ValidPosition(this.Conveyor, direction, this.Conveyor.GridPosition))
+                        this.Conveyor.MockRotate(direction);
+                }
+            } else if (this.Input.DragEnded && this.Conveyor != null) {
+                this.Conveyor.ApplyRotation();
+                this.Direction = this.Conveyor.Direction;
+                this.Place(this.Conveyor);
+                this.Conveyor.HideArrow();
+                this.Conveyor.SetPhantom(false);
+                this.Conveyor = null;
+                this.SwitchMode(this.MasterMode);
+            } else if (hit != null) {
+                if (hit.Value.Obj != this.Conveyor) {
+                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    this.Conveyor = hit.Value.Obj;
+                    this.Conveyor.ShowArrow();
+                }
+            } else if (this.Conveyor != null) {
+                if (this.Conveyor != null) this.Conveyor.HideArrow();
+                this.Conveyor = null;
+            }
+        }
+
+        private void DestructionBehaviour() {
+            Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
+            if (this.Input.DragPerformed && hit != null) this.DestroyConveyor(hit.Value.Obj);
+        }
+
+        private bool ValidPosition(Conveyor conveyor, Direction direction, Vector2Int position) {
+            List<Vector2Int> gridPositions = conveyor.GetGridPositions(position, direction);
+            return gridPositions.Select(gridPosition => this.Conveyors.GetValueOrDefault(gridPosition, null))
+                .All(c => c == null || c == conveyor);
+        }
+
+        private void Place(Conveyor conveyor) {
+            List<Vector2Int> gridPositions = this.Conveyors.Keys.Where(k => this.Conveyors[k] == conveyor).ToList();
+            foreach (Vector2Int gridPosition in gridPositions) {
+                this.Conveyors.Remove(gridPosition);
+            }
+            conveyor.GetGridPositions(conveyor.GridPosition).ForEach(p => this.Conveyors[p] = conveyor);
+        }
+
+        private void DestroyConveyor(Conveyor conveyor) {
+            List<Vector2Int> gridPositions = this.Conveyors.Keys.Where(k => this.Conveyors[k] == conveyor).ToList();
+            foreach (Vector2Int gridPosition in gridPositions) {
+                this.Conveyors.Remove(gridPosition);
+            }
+            conveyor.SetPhantom(true);
+            LeanTween.scale(conveyor.gameObject, Vector3.zero, 0.15f).setEaseInBack().setDestroyOnComplete(true);
+        }
+
+        private void ShowPhantom(Vector3 position) {
+            if (this.PhantomEnabled)
+                return;
+            this.PhantomEnabled = true;
+            if (this.EnablePhantomTween == null) this.PhantomConveyor.transform.position = position;
+            if (this.EnablePhantomTween != null) LeanTween.cancel(this.EnablePhantomTween.id);
+            if (this.PhantomConveyor == null) return;
+            this.EnablePhantomTween = LeanTween.scale(this.PhantomConveyor.gameObject, Vector3.one, 0.15f)
+                .setEaseOutBack()
+                .setOnComplete(() => this.EnablePhantomTween = null);
+        }
+
+        private void HidePhantom() {
+            if (!this.PhantomEnabled)
+                return;
+            this.PhantomEnabled = false;
+            if (this.EnablePhantomTween != null) LeanTween.cancel(this.EnablePhantomTween.id);
+            if (this.PhantomConveyor == null) return;
+            this.EnablePhantomTween = LeanTween.scale(this.PhantomConveyor.gameObject, Vector3.zero, 0.15f)
+                .setEaseInBack()
+                .setOnComplete(() => this.EnablePhantomTween = null);
+        }
+
+        private void NewPhantom() {
+            this.PhantomConveyor = Instantiate(this.ConveyorPrefab);
+            this.PhantomConveyor.EditorRotate(this.Direction);
+            this.PhantomConveyor.SetPhantom(true);
+            this.PhantomEnabled = false;
+            this.PhantomPosition = Vector2Int.zero;
+            this.PhantomConveyor.transform.localScale *= 0;
+            this.EnablePhantomTween = null;
+            this.MovePhantomTween = null;
+        }
+
+        #region Input
+        [Serializable]
+        private class _Input {
+            public bool DragEnded;
+            public bool DragInProgress;
+            public bool DragPerformed;
+            public bool SwitchToPlacement;
+            public bool SwitchToEdition;
+            public bool SwitchToDestruction;
+        }
+        private _Input Input = new();
+
+        protected override void OnEnable() {
+            base.OnEnable();
+            this.InputActions.Conveyors.Enable();
+            this.Input = new _Input {
+                DragEnded = false,
+                DragInProgress = false,
+                DragPerformed = false,
+                SwitchToPlacement = false,
+                SwitchToEdition = false,
+                SwitchToDestruction = false
+            };
+        }
+
+        protected override void OnDisable() {
+            base.OnDisable();
+            this.InputActions.Conveyors.Disable();
+        }
+
+        private void GatherInput() {
+            this.Input = new _Input {
+                DragPerformed = this.InputActions.Conveyors.Drag.WasPerformedThisFrame(),
+                DragInProgress = this.Input.DragInProgress,
+                DragEnded = this.InputActions.Conveyors.Drag.WasReleasedThisFrame(),
+                SwitchToPlacement = this.InputActions.Conveyors.ModePlacement.WasPerformedThisFrame(),
+                SwitchToEdition = this.InputActions.Conveyors.ModeEdition.WasPerformedThisFrame(),
+                SwitchToDestruction = this.InputActions.Conveyors.ModeDestruction.WasPerformedThisFrame()
+            };
+
+            if (this.Input.DragPerformed)
+                this.Input.DragInProgress = true;
+            if (this.Input.DragEnded)
+                this.Input.DragInProgress = false;
+        }
+        #endregion
+    }
+}

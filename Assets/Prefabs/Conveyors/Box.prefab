@@ -65,7 +65,7 @@ MonoBehaviour:
   OnConveyorMaterial: {fileID: 13400000, guid: 468eff97d7af75848bcc7d4119ed826e, type: 2}
   OffConveyorMaterial: {fileID: 13400000, guid: 2a12fa697d9df4845a6fd2ed92ef0729,
     type: 2}
-  MaxSpeed: 11
+  MaxSpeed: 3
 --- !u!33 &5469127305225401464
 MeshFilter:
   m_ObjectHideFlags: 0
