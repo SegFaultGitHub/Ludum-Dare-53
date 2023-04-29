@@ -50,6 +50,34 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Conveyors"",
+            ""id"": ""4b400cbe-fec1-4b06-87f8-5113bc71b648"",
+            ""actions"": [
+                {
+                    ""name"": ""Drag"",
+                    ""type"": ""Button"",
+                    ""id"": ""5754d5af-f18d-4192-9446-6827100a8835"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""f8c7fcc7-20e6-48e9-a8ac-623ec7f88113"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -63,6 +91,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // Globals
         m_Globals = asset.FindActionMap("Globals", throwIfNotFound: true);
         m_Globals_MousePosition = m_Globals.FindAction("MousePosition", throwIfNotFound: true);
+        // Conveyors
+        m_Conveyors = asset.FindActionMap("Conveyors", throwIfNotFound: true);
+        m_Conveyors_Drag = m_Conveyors.FindAction("Drag", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -166,6 +197,52 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public GlobalsActions @Globals => new GlobalsActions(this);
+
+    // Conveyors
+    private readonly InputActionMap m_Conveyors;
+    private List<IConveyorsActions> m_ConveyorsActionsCallbackInterfaces = new List<IConveyorsActions>();
+    private readonly InputAction m_Conveyors_Drag;
+    public struct ConveyorsActions
+    {
+        private @InputActions m_Wrapper;
+        public ConveyorsActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Drag => m_Wrapper.m_Conveyors_Drag;
+        public InputActionMap Get() { return m_Wrapper.m_Conveyors; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(ConveyorsActions set) { return set.Get(); }
+        public void AddCallbacks(IConveyorsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_ConveyorsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_ConveyorsActionsCallbackInterfaces.Add(instance);
+            @Drag.started += instance.OnDrag;
+            @Drag.performed += instance.OnDrag;
+            @Drag.canceled += instance.OnDrag;
+        }
+
+        private void UnregisterCallbacks(IConveyorsActions instance)
+        {
+            @Drag.started -= instance.OnDrag;
+            @Drag.performed -= instance.OnDrag;
+            @Drag.canceled -= instance.OnDrag;
+        }
+
+        public void RemoveCallbacks(IConveyorsActions instance)
+        {
+            if (m_Wrapper.m_ConveyorsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IConveyorsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_ConveyorsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_ConveyorsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public ConveyorsActions @Conveyors => new ConveyorsActions(this);
     private int m_GlobalSchemeIndex = -1;
     public InputControlScheme GlobalScheme
     {
@@ -178,5 +255,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public interface IGlobalsActions
     {
         void OnMousePosition(InputAction.CallbackContext context);
+    }
+    public interface IConveyorsActions
+    {
+        void OnDrag(InputAction.CallbackContext context);
     }
 }
