@@ -38,7 +38,7 @@ namespace Code.Conveyors {
         protected override void Start() {
             base.Start();
             this.Conveyors = new Dictionary<Vector2Int, Conveyor>();
-            this.NewPhantom();
+            this.SwitchMode(this.Mode);
         }
 
         private void Update() {
@@ -105,6 +105,10 @@ namespace Code.Conveyors {
         }
 
         private void PlacementBehaviour() {
+            if (this.Input.RotateCameraInProgress)
+                this.MoveCamera();
+            this.PerformMoveCamera();
+
             if (this.Input.DragPerformed && this.PhantomEnabled) {
                 this.Conveyor = this.PhantomConveyor;
                 this.Conveyor.ShowArrow();
@@ -143,6 +147,10 @@ namespace Code.Conveyors {
         }
 
         private void EditionBehaviour() {
+            if (this.Input.RotateCameraInProgress)
+                this.MoveCamera();
+            this.PerformMoveCamera();
+
             Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
             if (this.Input.DragPerformed && this.Conveyor != null) {
                 Hit<Plane>? planeHit = this.Raycast<Plane>(this.ConveyorPlaneLayer);
@@ -185,6 +193,10 @@ namespace Code.Conveyors {
         }
 
         private void DestructionBehaviour() {
+            if (this.Input.RotateCameraInProgress)
+                this.MoveCamera();
+            this.PerformMoveCamera();
+
             Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
             if (this.Input.DragPerformed && hit != null) this.DestroyConveyor(hit.Value.Obj);
         }
@@ -195,29 +207,30 @@ namespace Code.Conveyors {
             else if (this.Input.RotateCameraInProgress)
                 this.RotateCamera();
 
-            void _MoveCamera() {
-                if (this.CameraVelocity.sqrMagnitude == 0)
-                    return;
-                this.Camera.transform.position += this.CameraVelocity;
-                this.CameraVelocity *= 0.95f;
-                if (this.CameraVelocity.magnitude < 0.001f)
-                    this.CameraVelocity *= 0;
-            }
-            void _RotateCamera() {
-                if (this.CameraAngleVelocity.sqrMagnitude == 0)
-                    return;
-                Vector3 angles = this.Camera.transform.eulerAngles;
-                angles.y += this.CameraAngleVelocity.x * 1.5f;
-                angles.x -= this.CameraAngleVelocity.y * 1.5f;
-                angles.x = Mathf.Clamp(angles.x, 25, 75);
-                this.Camera.transform.eulerAngles = angles;
-                this.CameraAngleVelocity *= 0.95f;
-                if (this.CameraAngleVelocity.magnitude < 0.001f)
-                    this.CameraAngleVelocity *= 0;
-            }
+            this.PerformMoveCamera();
+            this.PerformRotateCamera();
+        }
 
-            _MoveCamera();
-            _RotateCamera();
+
+        private void PerformMoveCamera() {
+            if (this.CameraVelocity.sqrMagnitude == 0)
+                return;
+            this.Camera.transform.position += this.CameraVelocity;
+            this.CameraVelocity *= 0.95f;
+            if (this.CameraVelocity.magnitude < 0.001f)
+                this.CameraVelocity *= 0;
+        }
+        private void PerformRotateCamera() {
+            if (this.CameraAngleVelocity.sqrMagnitude == 0)
+                return;
+            Vector3 angles = this.Camera.transform.eulerAngles;
+            angles.y += this.CameraAngleVelocity.x * 1.5f;
+            angles.x -= this.CameraAngleVelocity.y * 1.5f;
+            angles.x = Mathf.Clamp(angles.x, 25, 75);
+            this.Camera.transform.eulerAngles = angles;
+            this.CameraAngleVelocity *= 0.95f;
+            if (this.CameraAngleVelocity.magnitude < 0.001f)
+                this.CameraAngleVelocity *= 0;
         }
 
         private bool ValidPosition(Conveyor conveyor, Direction direction, Vector2Int position) {

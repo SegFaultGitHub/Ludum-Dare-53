@@ -213,51 +213,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &6669277558351993911
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1061164065825410593}
-  - component: {fileID: 2335032599644771017}
-  m_Layer: 0
-  m_Name: DetectionDelivery
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1061164065825410593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669277558351993911}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 0.5}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3062640535118286801}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2335032599644771017
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6669277558351993911}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6729769435241986693
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,7 +246,7 @@ RectTransform:
   m_Children:
   - {fileID: 9193634912955973904}
   m_Father: {fileID: 3062640535118286801}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -391,7 +346,6 @@ Transform:
   m_Children:
   - {fileID: 8431990907975709586}
   - {fileID: 5277920729303807945}
-  - {fileID: 1061164065825410593}
   - {fileID: 1012046040532334143}
   - {fileID: 1128543271311460968}
   m_Father: {fileID: 0}
@@ -409,10 +363,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4a000322040da249a87b10d130d9fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: {fileID: 0}
-  door: {fileID: 4788769358629481843}
-  convoyers: {fileID: 8962644469774634896}
-  destinationText: {fileID: 5839483463423005320}
+  ScoreManagement: {fileID: 0}
+  Door: {fileID: 4788769358629481843}
+  Conveyors: {fileID: 8962644469774634896}
+  DestinationText: {fileID: 5839483463423005320}
 --- !u!65 &156505509792012543
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -459,7 +413,7 @@ Transform:
   - {fileID: 7220429407085482267}
   - {fileID: 5258682636341152514}
   m_Father: {fileID: 3062640535118286801}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4673007445773478950
 PrefabInstance:
