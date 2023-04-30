@@ -90,6 +90,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mode: Camera"",
+                    ""type"": ""Button"",
+                    ""id"": ""39940445-40b5-4edf-b8b6-350e553f46cb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -136,6 +145,65 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Mode: Destruction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8508237e-87c1-455c-a961-1df3c2f2470b"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mode: Camera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Camera"",
+            ""id"": ""19f23d41-b5d9-4ed1-8c09-1bc95ff99576"",
+            ""actions"": [
+                {
+                    ""name"": ""MoveCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""3fd27c48-b885-4636-9e86-9e5d7a0827ab"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""0d0d154d-6fd5-4134-8943-99a07ef54729"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""f8bb7eae-4059-4828-9697-9f9d7ee1359a"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Hold(duration=1.401298E-45)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0d9e0cee-5d73-4b4f-91e3-b734f981797c"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold(duration=1.401298E-45)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -157,6 +225,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Conveyors_ModeEdition = m_Conveyors.FindAction("Mode: Edition", throwIfNotFound: true);
         m_Conveyors_ModePlacement = m_Conveyors.FindAction("Mode: Placement", throwIfNotFound: true);
         m_Conveyors_ModeDestruction = m_Conveyors.FindAction("Mode: Destruction", throwIfNotFound: true);
+        m_Conveyors_ModeCamera = m_Conveyors.FindAction("Mode: Camera", throwIfNotFound: true);
+        // Camera
+        m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
+        m_Camera_MoveCamera = m_Camera.FindAction("MoveCamera", throwIfNotFound: true);
+        m_Camera_RotateCamera = m_Camera.FindAction("RotateCamera", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -268,6 +341,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Conveyors_ModeEdition;
     private readonly InputAction m_Conveyors_ModePlacement;
     private readonly InputAction m_Conveyors_ModeDestruction;
+    private readonly InputAction m_Conveyors_ModeCamera;
     public struct ConveyorsActions
     {
         private @InputActions m_Wrapper;
@@ -276,6 +350,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @ModeEdition => m_Wrapper.m_Conveyors_ModeEdition;
         public InputAction @ModePlacement => m_Wrapper.m_Conveyors_ModePlacement;
         public InputAction @ModeDestruction => m_Wrapper.m_Conveyors_ModeDestruction;
+        public InputAction @ModeCamera => m_Wrapper.m_Conveyors_ModeCamera;
         public InputActionMap Get() { return m_Wrapper.m_Conveyors; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -297,6 +372,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ModeDestruction.started += instance.OnModeDestruction;
             @ModeDestruction.performed += instance.OnModeDestruction;
             @ModeDestruction.canceled += instance.OnModeDestruction;
+            @ModeCamera.started += instance.OnModeCamera;
+            @ModeCamera.performed += instance.OnModeCamera;
+            @ModeCamera.canceled += instance.OnModeCamera;
         }
 
         private void UnregisterCallbacks(IConveyorsActions instance)
@@ -313,6 +391,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ModeDestruction.started -= instance.OnModeDestruction;
             @ModeDestruction.performed -= instance.OnModeDestruction;
             @ModeDestruction.canceled -= instance.OnModeDestruction;
+            @ModeCamera.started -= instance.OnModeCamera;
+            @ModeCamera.performed -= instance.OnModeCamera;
+            @ModeCamera.canceled -= instance.OnModeCamera;
         }
 
         public void RemoveCallbacks(IConveyorsActions instance)
@@ -330,6 +411,60 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public ConveyorsActions @Conveyors => new ConveyorsActions(this);
+
+    // Camera
+    private readonly InputActionMap m_Camera;
+    private List<ICameraActions> m_CameraActionsCallbackInterfaces = new List<ICameraActions>();
+    private readonly InputAction m_Camera_MoveCamera;
+    private readonly InputAction m_Camera_RotateCamera;
+    public struct CameraActions
+    {
+        private @InputActions m_Wrapper;
+        public CameraActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MoveCamera => m_Wrapper.m_Camera_MoveCamera;
+        public InputAction @RotateCamera => m_Wrapper.m_Camera_RotateCamera;
+        public InputActionMap Get() { return m_Wrapper.m_Camera; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CameraActions set) { return set.Get(); }
+        public void AddCallbacks(ICameraActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CameraActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CameraActionsCallbackInterfaces.Add(instance);
+            @MoveCamera.started += instance.OnMoveCamera;
+            @MoveCamera.performed += instance.OnMoveCamera;
+            @MoveCamera.canceled += instance.OnMoveCamera;
+            @RotateCamera.started += instance.OnRotateCamera;
+            @RotateCamera.performed += instance.OnRotateCamera;
+            @RotateCamera.canceled += instance.OnRotateCamera;
+        }
+
+        private void UnregisterCallbacks(ICameraActions instance)
+        {
+            @MoveCamera.started -= instance.OnMoveCamera;
+            @MoveCamera.performed -= instance.OnMoveCamera;
+            @MoveCamera.canceled -= instance.OnMoveCamera;
+            @RotateCamera.started -= instance.OnRotateCamera;
+            @RotateCamera.performed -= instance.OnRotateCamera;
+            @RotateCamera.canceled -= instance.OnRotateCamera;
+        }
+
+        public void RemoveCallbacks(ICameraActions instance)
+        {
+            if (m_Wrapper.m_CameraActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICameraActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CameraActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CameraActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CameraActions @Camera => new CameraActions(this);
     private int m_GlobalSchemeIndex = -1;
     public InputControlScheme GlobalScheme
     {
@@ -349,5 +484,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnModeEdition(InputAction.CallbackContext context);
         void OnModePlacement(InputAction.CallbackContext context);
         void OnModeDestruction(InputAction.CallbackContext context);
+        void OnModeCamera(InputAction.CallbackContext context);
+    }
+    public interface ICameraActions
+    {
+        void OnMoveCamera(InputAction.CallbackContext context);
+        void OnRotateCamera(InputAction.CallbackContext context);
     }
 }

@@ -9,7 +9,8 @@ namespace Code.Conveyors {
     public enum Mode {
         Placement,
         Edition,
-        Destruction
+        Destruction,
+        Camera
     }
 
     public class ConveyorsManager : WithRaycast {
@@ -19,6 +20,9 @@ namespace Code.Conveyors {
 
         [field: SerializeField] private Conveyor ConveyorPrefab;
         [field: SerializeField] private Conveyor PhantomConveyor;
+
+        private Vector3 CameraVelocity;
+        private Vector2 CameraAngleVelocity;
 
         [field: SerializeField] private Mode Mode;
         private Conveyor Conveyor;
@@ -37,9 +41,8 @@ namespace Code.Conveyors {
             this.NewPhantom();
         }
 
-        protected override void Update() {
-            base.Update();
-            this.GatherInput();
+        private void Update() {
+            this.GatherInputs();
 
             if (this.Input.SwitchToDestruction) {
                 this.MasterMode = Mode.Destruction;
@@ -50,6 +53,9 @@ namespace Code.Conveyors {
             } else if (this.Input.SwitchToPlacement) {
                 this.MasterMode = Mode.Placement;
                 this.SwitchMode(Mode.Placement);
+            } else if (this.Input.SwitchToCamera) {
+                this.MasterMode = Mode.Camera;
+                this.SwitchMode(Mode.Camera);
             }
 
             switch (this.Mode) {
@@ -61,6 +67,9 @@ namespace Code.Conveyors {
                     break;
                 case Mode.Destruction:
                     this.DestructionBehaviour();
+                    break;
+                case Mode.Camera:
+                    this.CameraBehaviour();
                     break;
                 default:
                     throw new Exception($"[ConveyorsRayCast:Update] Unexpected mode {this.Mode}");
@@ -84,12 +93,14 @@ namespace Code.Conveyors {
                         this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
                     break;
                 case Mode.Destruction:
+                case Mode.Camera:
                     if (this.Conveyor != null) this.Conveyor.HideArrow();
                     this.HidePhantom();
                     if (this.PhantomConveyor != null)
                         this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
                     break;
-                default: throw new ArgumentOutOfRangeException();
+                default:
+                    throw new Exception($"[ConveyorsManager:SwitchMode] Unexpected mode {this.Mode}");
             }
         }
 
@@ -178,6 +189,37 @@ namespace Code.Conveyors {
             if (this.Input.DragPerformed && hit != null) this.DestroyConveyor(hit.Value.Obj);
         }
 
+        private void CameraBehaviour() {
+            if (this.Input.MoveCameraInProgress)
+                this.MoveCamera();
+            else if (this.Input.RotateCameraInProgress)
+                this.RotateCamera();
+
+            void _MoveCamera() {
+                if (this.CameraVelocity.sqrMagnitude == 0)
+                    return;
+                this.Camera.transform.position += this.CameraVelocity;
+                this.CameraVelocity *= 0.95f;
+                if (this.CameraVelocity.magnitude < 0.001f)
+                    this.CameraVelocity *= 0;
+            }
+            void _RotateCamera() {
+                if (this.CameraAngleVelocity.sqrMagnitude == 0)
+                    return;
+                Vector3 angles = this.Camera.transform.eulerAngles;
+                angles.y += this.CameraAngleVelocity.x * 1.5f;
+                angles.x -= this.CameraAngleVelocity.y * 1.5f;
+                angles.x = Mathf.Clamp(angles.x, 25, 75);
+                this.Camera.transform.eulerAngles = angles;
+                this.CameraAngleVelocity *= 0.95f;
+                if (this.CameraAngleVelocity.magnitude < 0.001f)
+                    this.CameraAngleVelocity *= 0;
+            }
+
+            _MoveCamera();
+            _RotateCamera();
+        }
+
         private bool ValidPosition(Conveyor conveyor, Direction direction, Vector2Int position) {
             List<Vector2Int> gridPositions = conveyor.GetGridPositions(position, direction);
             return gridPositions.Select(gridPosition => this.Conveyors.GetValueOrDefault(gridPosition, null))
@@ -235,6 +277,15 @@ namespace Code.Conveyors {
             this.MovePhantomTween = null;
         }
 
+        private void MoveCamera() {
+            Vector2 delta = Quaternion.Euler(0, 0, -this.Camera.transform.eulerAngles.y) * this.MousePositionDelta / 60;
+            this.CameraVelocity = new Vector3(-delta.x, 0, -delta.y);
+        }
+
+        private void RotateCamera() {
+            this.CameraAngleVelocity = -this.MousePositionDelta / 30;
+        }
+
         #region Input
         [Serializable]
         private class _Input {
@@ -244,41 +295,80 @@ namespace Code.Conveyors {
             public bool SwitchToPlacement;
             public bool SwitchToEdition;
             public bool SwitchToDestruction;
+            public bool SwitchToCamera;
+            // Camera
+            public bool MoveCameraPerformed;
+            public bool MoveCameraInProgress;
+            public bool MoveCameraEnded;
+            // --
+            public bool RotateCameraPerformed;
+            public bool RotateCameraInProgress;
+            public bool RotateCameraEnded;
         }
         private _Input Input = new();
 
         protected override void OnEnable() {
             base.OnEnable();
             this.InputActions.Conveyors.Enable();
+            this.InputActions.Camera.Enable();
             this.Input = new _Input {
                 DragEnded = false,
                 DragInProgress = false,
                 DragPerformed = false,
                 SwitchToPlacement = false,
                 SwitchToEdition = false,
-                SwitchToDestruction = false
+                SwitchToDestruction = false,
+                SwitchToCamera = false,
+                // Camera
+                MoveCameraPerformed = false,
+                MoveCameraInProgress = false,
+                MoveCameraEnded = false,
+                RotateCameraPerformed = false,
+                RotateCameraInProgress = false,
+                RotateCameraEnded = false
             };
         }
 
         protected override void OnDisable() {
             base.OnDisable();
             this.InputActions.Conveyors.Disable();
+            this.InputActions.Camera.Disable();
         }
 
-        private void GatherInput() {
+        protected override void GatherInputs() {
+            base.GatherInputs();
             this.Input = new _Input {
                 DragPerformed = this.InputActions.Conveyors.Drag.WasPerformedThisFrame(),
                 DragInProgress = this.Input.DragInProgress,
                 DragEnded = this.InputActions.Conveyors.Drag.WasReleasedThisFrame(),
                 SwitchToPlacement = this.InputActions.Conveyors.ModePlacement.WasPerformedThisFrame(),
                 SwitchToEdition = this.InputActions.Conveyors.ModeEdition.WasPerformedThisFrame(),
-                SwitchToDestruction = this.InputActions.Conveyors.ModeDestruction.WasPerformedThisFrame()
+                SwitchToDestruction = this.InputActions.Conveyors.ModeDestruction.WasPerformedThisFrame(),
+                SwitchToCamera = this.InputActions.Conveyors.ModeCamera.WasPerformedThisFrame(),
+                // Camera
+                MoveCameraPerformed = this.InputActions.Camera.MoveCamera.WasPerformedThisFrame(),
+                MoveCameraInProgress = this.Input.MoveCameraInProgress,
+                MoveCameraEnded = this.InputActions.Camera.MoveCamera.WasReleasedThisFrame(),
+                // --
+                RotateCameraPerformed = this.InputActions.Camera.RotateCamera.WasPerformedThisFrame(),
+                RotateCameraInProgress = this.Input.RotateCameraInProgress,
+                RotateCameraEnded = this.InputActions.Camera.RotateCamera.WasReleasedThisFrame(),
             };
 
             if (this.Input.DragPerformed)
                 this.Input.DragInProgress = true;
             if (this.Input.DragEnded)
                 this.Input.DragInProgress = false;
+
+            if (this.Input.MoveCameraPerformed)
+                this.Input.MoveCameraInProgress = true;
+            if (this.Input.MoveCameraEnded)
+                this.Input.MoveCameraInProgress = false;
+
+            if (this.Input.RotateCameraPerformed)
+                this.Input.RotateCameraInProgress = true;
+            if (this.Input.RotateCameraEnded)
+                this.Input.RotateCameraInProgress = false;
         }
         #endregion
     }
