@@ -57,5 +57,9 @@ namespace Code.Destinations {
         public Destination GetRandomDestination() {
             return Utils.Utils.Sample(this.EnabledDestinations);
         }
+
+        public void Disable() {
+            this.EnabledDestinations.ForEach(d => d.Disable());
+        }
     }
 }

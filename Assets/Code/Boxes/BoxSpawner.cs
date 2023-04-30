@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Code.Destinations;
 using Code.Extensions;
+using TMPro;
 using UnityEngine;
 
 namespace Code.Boxes {
@@ -12,7 +13,23 @@ namespace Code.Boxes {
         [field: SerializeField] private Transform BoxesParent;
         [field: SerializeField] private DestinationManager DestinationManager;
 
-        private void Start() => this.SpawnBox();
+        // Initial delay
+        [field: SerializeField] private float InitialDelay;
+        [field: SerializeField] private TMP_Text CountdownText;
+        private float Elapsed;
+
+        private void Start() => this.InSeconds(this.InitialDelay, this.SpawnBox);
+
+        private void Update() {
+            if (this.Elapsed >= this.InitialDelay) return;
+
+            int seconds = (int) Mathf.Max(Mathf.Floor(this.InitialDelay - this.Elapsed), 0);
+
+            this.CountdownText.text = $"{seconds}";
+            this.Elapsed += Time.deltaTime;
+
+            if (this.Elapsed >= this.InitialDelay) this.CountdownText.text = "--";
+        }
 
         protected virtual void SpawnBox() {
             if (this.Enabled && this.DestinationManager.Ready) {
@@ -23,5 +40,7 @@ namespace Code.Boxes {
 
             this.InSeconds(this.SpawnInterval, this.SpawnBox);
         }
+
+        public void Disable() => this.Enabled = false;
     }
 }

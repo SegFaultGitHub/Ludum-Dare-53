@@ -28,7 +28,10 @@ namespace Code {
         }
 
         public void HideArrow() {
-            if (this.ArrowTween != null) LeanTween.cancel(this.ArrowTween.id);
+            if (this.ArrowTween != null) {
+                LeanTween.cancel(this.ArrowTween.id);
+                this.ArrowTween = null;
+            }
             float duration = this.Arrow.transform.localScale.x * 0.25f;
             this.ArrowTween = LeanTween.scale(this.Arrow, Vector3.zero, duration)
                 .setEaseInBack()
@@ -36,7 +39,10 @@ namespace Code {
         }
 
         public void ShowArrow() {
-            if (this.RotateTween != null) LeanTween.cancel(this.RotateTween.id);
+            if (this.ArrowTween != null) {
+                LeanTween.cancel(this.ArrowTween.id);
+                this.ArrowTween = null;
+            }
             float duration = (this.InitialArrowScale.x - this.Arrow.transform.localScale.x) * 0.25f;
             this.ArrowTween = LeanTween.scale(this.Arrow, this.InitialArrowScale, duration)
                 .setEaseOutBack()
@@ -44,11 +50,14 @@ namespace Code {
         }
 
         public void MockRotate(Direction direction) {
-            if (this.Locked || this.DisplayedDirection == direction) return;
+            if (this.Locked) return;
 
             this.DisplayedDirection = direction;
 
-            if (this.RotateTween != null) LeanTween.cancel(this.RotateTween.id);
+            if (this.RotateTween != null) {
+                LeanTween.cancel(this.RotateTween.id);
+                this.RotateTween = null;
+            }
             float angle = GetRotation(direction);
 
             this.RotateTween = LeanTween.rotateY(this.Models, angle, 0.2f).setEaseOutQuad().setOnComplete(() => this.RotateTween = null);
@@ -63,7 +72,7 @@ namespace Code {
             this.Direction = this.DisplayedDirection;
             this.MoveTrigger.transform.localEulerAngles = new Vector3(0, GetRotation(this.Direction), 0);
             this.PhysicsCollider.transform.localEulerAngles = new Vector3(0, GetRotation(this.Direction), 0);
-            this.MockRotate(this.Direction);
+            //this.MockRotate(this.Direction);
         }
 
         public void EditorRotate(Direction direction) {
