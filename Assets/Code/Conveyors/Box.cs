@@ -3,26 +3,20 @@ using UnityEngine;
 
 namespace Code.Conveyors {
     public class Box : MonoBehaviour {
-        private Rigidbody Rigidbody;
-        private List<Conveyor> ActiveConveyors;
-
-        private enum _State {
-            OnConveyor, OffConveyor, None
-        }
 
         [field: SerializeField] private PhysicMaterial OnConveyorMaterial, OffConveyorMaterial;
         [field: SerializeField] private float MaxSpeed = 1f;
-        private float Ratio => this.MaxSpeed / 160;
-        private _State State;
 
-        public int DestinationBox = 0;
+        [field: SerializeField] private BoxDestinationUI BoxDestinationUI;
+        public Destination Destination { get; set; }
+        private List<Conveyor> ActiveConveyors;
+        private Rigidbody Rigidbody;
+        private _State State;
+        private float Ratio => this.MaxSpeed / 160;
 
         private void Awake() {
             this.ActiveConveyors = new List<Conveyor>();
             this.Rigidbody = this.GetComponent<Rigidbody>();
-
-            //Assign destination to the box based on the number of Destination currently created
-            DestinationBox = Random.Range(0, GameObject.FindFirstObjectByType<SpawnDestinations>().numberOfDestination);
             this.State = _State.None;
         }
 
@@ -35,6 +29,18 @@ namespace Code.Conveyors {
                 this.State = _State.OnConveyor;
                 this.OnConveyor(previousState);
             }
+        }
+
+        private void OnTriggerEnter(Collider other) {
+            Conveyor conveyor = other.GetComponentInParent<Conveyor>();
+            if (conveyor == null) return;
+            this.ActiveConveyors.Add(conveyor);
+        }
+
+        private void OnTriggerExit(Collider other) {
+            Conveyor conveyor = other.GetComponentInParent<Conveyor>();
+            if (conveyor == null) return;
+            this.ActiveConveyors.Remove(conveyor);
         }
 
         private void OnConveyor(_State previousState) {
@@ -50,11 +56,14 @@ namespace Code.Conveyors {
             if (previousState != _State.OffConveyor) this.AssignMaterial(this.OffConveyorMaterial);
         }
 
-        private void OnTriggerEnter(Collider other) {
-            Conveyor conveyor = other.GetComponentInParent<Conveyor>();
-            if (conveyor == null) return;
-            this.ActiveConveyors.Add(conveyor);
+        public void SetDestination(Destination destination) {
+            this.Destination = destination;
+            this.BoxDestinationUI.SetDestination(destination);
         }
+
+        public void ShowDestination() => this.BoxDestinationUI.Open();
+        public void HideDestination() => this.BoxDestinationUI.Close();
+
 
         private void AssignMaterial(PhysicMaterial material) {
             foreach (Collider collider in this.GetComponents<Collider>()) {
@@ -62,10 +71,8 @@ namespace Code.Conveyors {
             }
         }
 
-        private void OnTriggerExit(Collider other) {
-            Conveyor conveyor = other.GetComponentInParent<Conveyor>();
-            if (conveyor == null) return;
-            this.ActiveConveyors.Remove(conveyor);
+        private enum _State {
+            OnConveyor, OffConveyor, None
         }
     }
 }

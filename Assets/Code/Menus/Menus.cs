@@ -1,33 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Menus : MonoBehaviour
-{
-    private bool settingsOpen;
+public class Menus : MonoBehaviour {
 
     public GameObject settingsMenu;
+    private bool settingsOpen;
 
-    private void Start()
-    {
-        settingsOpen = false;
-        settingsMenu.SetActive(settingsOpen);
+    private void Start() {
+        this.settingsOpen = false;
+        this.settingsMenu.SetActive(this.settingsOpen);
     }
 
-    public void PlayGame()
-    {
+    public void PlayGame() {
         SceneManager.LoadScene(1);
     }
 
-    public void QuitGame()
-    {
+    public void QuitGame() {
         Application.Quit();
     }
 
-    public void SettingsMenu()
-    {
-        settingsOpen = !settingsOpen;
-        settingsMenu.SetActive(settingsOpen);
+    public void SettingsMenu() {
+        this.settingsOpen = !this.settingsOpen;
+        this.settingsMenu.SetActive(this.settingsOpen);
     }
 }

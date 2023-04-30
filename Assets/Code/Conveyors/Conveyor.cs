@@ -17,9 +17,9 @@ namespace Code {
         [field: SerializeField] private GameObject MoveTrigger;
         [field: SerializeField] private GameObject PhysicsCollider;
         private Vector3 InitialArrowScale;
-        public Vector2Int GridPosition { get; set; }
 
         private LTDescr RotateTween, ArrowTween;
+        public Vector2Int GridPosition { get; set; }
         public bool Phantom { get; set; }
 
         private void Awake() {
@@ -51,9 +51,7 @@ namespace Code {
             if (this.RotateTween != null) LeanTween.cancel(this.RotateTween.id);
             float angle = GetRotation(direction);
 
-            this.RotateTween = LeanTween.rotateY(this.Models, angle, 0.2f)
-                .setEaseOutQuad()
-                .setOnComplete(() => this.RotateTween = null);
+            this.RotateTween = LeanTween.rotateY(this.Models, angle, 0.2f).setEaseOutQuad().setOnComplete(() => this.RotateTween = null);
         }
 
         public void ApplyRotation() {
