@@ -90,15 +90,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Mode: Camera"",
-                    ""type"": ""Button"",
-                    ""id"": ""39940445-40b5-4edf-b8b6-350e553f46cb"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -145,17 +136,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Mode: Destruction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8508237e-87c1-455c-a961-1df3c2f2470b"",
-                    ""path"": ""<Keyboard>/c"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Mode: Camera"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -186,7 +166,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""f8bb7eae-4059-4828-9697-9f9d7ee1359a"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""path"": ""<Mouse>/middleButton"",
                     ""interactions"": ""Hold(duration=1.401298E-45)"",
                     ""processors"": """",
                     ""groups"": """",
@@ -225,7 +205,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Conveyors_ModeEdition = m_Conveyors.FindAction("Mode: Edition", throwIfNotFound: true);
         m_Conveyors_ModePlacement = m_Conveyors.FindAction("Mode: Placement", throwIfNotFound: true);
         m_Conveyors_ModeDestruction = m_Conveyors.FindAction("Mode: Destruction", throwIfNotFound: true);
-        m_Conveyors_ModeCamera = m_Conveyors.FindAction("Mode: Camera", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_MoveCamera = m_Camera.FindAction("MoveCamera", throwIfNotFound: true);
@@ -341,7 +320,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Conveyors_ModeEdition;
     private readonly InputAction m_Conveyors_ModePlacement;
     private readonly InputAction m_Conveyors_ModeDestruction;
-    private readonly InputAction m_Conveyors_ModeCamera;
     public struct ConveyorsActions
     {
         private @InputActions m_Wrapper;
@@ -350,7 +328,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         public InputAction @ModeEdition => m_Wrapper.m_Conveyors_ModeEdition;
         public InputAction @ModePlacement => m_Wrapper.m_Conveyors_ModePlacement;
         public InputAction @ModeDestruction => m_Wrapper.m_Conveyors_ModeDestruction;
-        public InputAction @ModeCamera => m_Wrapper.m_Conveyors_ModeCamera;
         public InputActionMap Get() { return m_Wrapper.m_Conveyors; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -372,9 +349,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ModeDestruction.started += instance.OnModeDestruction;
             @ModeDestruction.performed += instance.OnModeDestruction;
             @ModeDestruction.canceled += instance.OnModeDestruction;
-            @ModeCamera.started += instance.OnModeCamera;
-            @ModeCamera.performed += instance.OnModeCamera;
-            @ModeCamera.canceled += instance.OnModeCamera;
         }
 
         private void UnregisterCallbacks(IConveyorsActions instance)
@@ -391,9 +365,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @ModeDestruction.started -= instance.OnModeDestruction;
             @ModeDestruction.performed -= instance.OnModeDestruction;
             @ModeDestruction.canceled -= instance.OnModeDestruction;
-            @ModeCamera.started -= instance.OnModeCamera;
-            @ModeCamera.performed -= instance.OnModeCamera;
-            @ModeCamera.canceled -= instance.OnModeCamera;
         }
 
         public void RemoveCallbacks(IConveyorsActions instance)
@@ -484,7 +455,6 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         void OnModeEdition(InputAction.CallbackContext context);
         void OnModePlacement(InputAction.CallbackContext context);
         void OnModeDestruction(InputAction.CallbackContext context);
-        void OnModeCamera(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {

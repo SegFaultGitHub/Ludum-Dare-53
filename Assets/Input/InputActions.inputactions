@@ -68,15 +68,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "Mode: Camera",
-                    "type": "Button",
-                    "id": "39940445-40b5-4edf-b8b6-350e553f46cb",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -123,17 +114,6 @@
                     "action": "Mode: Destruction",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8508237e-87c1-455c-a961-1df3c2f2470b",
-                    "path": "<Keyboard>/c",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Mode: Camera",
-                    "isComposite": false,
-                    "isPartOfComposite": false
                 }
             ]
         },
@@ -164,7 +144,7 @@
                 {
                     "name": "",
                     "id": "f8bb7eae-4059-4828-9697-9f9d7ee1359a",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "Hold(duration=1.401298E-45)",
                     "processors": "",
                     "groups": "",
