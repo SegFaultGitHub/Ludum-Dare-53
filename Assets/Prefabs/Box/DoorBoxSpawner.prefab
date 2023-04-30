@@ -73,7 +73,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3640824680707126099}
-  - component: {fileID: 2549931438114315304}
+  - component: {fileID: 1108762285149479348}
   m_Layer: 0
   m_Name: DoorBoxSpawner
   m_TagString: Untagged
@@ -99,7 +99,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2549931438114315304
+--- !u!114 &1108762285149479348
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2496995744857246381}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0949f6157f1643c4fb04f016015ed135, type: 3}
+  m_Script: {fileID: 11500000, guid: 0845d4083f480eb45a6d139d6cbd72ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SpawnInterval: 3

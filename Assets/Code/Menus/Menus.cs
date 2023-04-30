@@ -17,8 +17,6 @@ public class Menus : MonoBehaviour {
     }
 
     public void PlayGame() {
-        //SceneManager.LoadScene(1);
-
         LevelsSelectionMenu();
     }
 
@@ -35,5 +33,10 @@ public class Menus : MonoBehaviour {
     {
         this.levelSelectionOpen = !this.levelSelectionOpen;
         this.levelsSelectionMenu.SetActive(this.levelSelectionOpen);
+    }
+
+    public void LevelLoading(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
     }
 }
