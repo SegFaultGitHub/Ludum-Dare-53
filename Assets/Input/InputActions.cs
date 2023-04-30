@@ -186,6 +186,34 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Menus"",
+            ""id"": ""71f827d5-c924-4ce4-b4e9-1066811f0d21"",
+            ""actions"": [
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""55557cf6-4728-414e-a9d9-d03308f30804"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""f17b0eae-6c49-4771-a03c-09c6b95b0b5a"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -209,6 +237,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_MoveCamera = m_Camera.FindAction("MoveCamera", throwIfNotFound: true);
         m_Camera_RotateCamera = m_Camera.FindAction("RotateCamera", throwIfNotFound: true);
+        // Menus
+        m_Menus = asset.FindActionMap("Menus", throwIfNotFound: true);
+        m_Menus_Pause = m_Menus.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -436,6 +467,52 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public CameraActions @Camera => new CameraActions(this);
+
+    // Menus
+    private readonly InputActionMap m_Menus;
+    private List<IMenusActions> m_MenusActionsCallbackInterfaces = new List<IMenusActions>();
+    private readonly InputAction m_Menus_Pause;
+    public struct MenusActions
+    {
+        private @InputActions m_Wrapper;
+        public MenusActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Pause => m_Wrapper.m_Menus_Pause;
+        public InputActionMap Get() { return m_Wrapper.m_Menus; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MenusActions set) { return set.Get(); }
+        public void AddCallbacks(IMenusActions instance)
+        {
+            if (instance == null || m_Wrapper.m_MenusActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_MenusActionsCallbackInterfaces.Add(instance);
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
+        }
+
+        private void UnregisterCallbacks(IMenusActions instance)
+        {
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
+        }
+
+        public void RemoveCallbacks(IMenusActions instance)
+        {
+            if (m_Wrapper.m_MenusActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IMenusActions instance)
+        {
+            foreach (var item in m_Wrapper.m_MenusActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_MenusActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public MenusActions @Menus => new MenusActions(this);
     private int m_GlobalSchemeIndex = -1;
     public InputControlScheme GlobalScheme
     {
@@ -460,5 +537,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     {
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnRotateCamera(InputAction.CallbackContext context);
+    }
+    public interface IMenusActions
+    {
+        void OnPause(InputAction.CallbackContext context);
     }
 }
