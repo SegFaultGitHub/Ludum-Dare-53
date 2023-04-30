@@ -1,7 +1,5 @@
 using UnityEngine;
 
 namespace Code.Conveyors {
-    public class PhantomConveyor : MonoBehaviour {
-        
-    }
+    public class PhantomConveyor : MonoBehaviour { }
 }

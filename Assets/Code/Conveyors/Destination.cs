@@ -1,67 +1,50 @@
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Code.Conveyors
-{
-    public class Destination : MonoBehaviour
-    {
+namespace Code.Conveyors {
+    public class Destination : MonoBehaviour {
 
         public ScoreManagement score;
-        private float destroyDelay = 3f;
 
         public GameObject door;
         public GameObject convoyers;
+        public string DestinationName { get; set; }
+        public TMP_Text destinationText;
 
-        public GameObject destinationImage;
-        public TMP_Text destinationName;
-
-        public int destinationId;
+        private readonly float destroyDelay = 3f;
 
         // Start is called before the first frame update
-        void Start()
-        {
-            score = GameObject.FindGameObjectWithTag("ScoreManagement").GetComponent<ScoreManagement>();
+        private void Start() {
+            this.score = GameObject.FindGameObjectWithTag("ScoreManagement").GetComponent<ScoreManagement>();
 
-
-            StartCoroutine(OpenAnimation());
+            this.OpenAnimation();
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        public void OnTriggerEnter(Collider collision)
-        {
-            if (collision.gameObject.CompareTag("Box"))
-            {
+        public void OnTriggerEnter(Collider collision) {
+            if (collision.gameObject.CompareTag("Box")) {
                 Box _box = collision.gameObject.GetComponent<Box>();
 
-                if (_box.DestinationBox == destinationId)
-                {
+                if (_box.Destination == this) {
                     Debug.Log("Box delivered !");
-                    score.AddScore(100);
-                }
-                else
-                {
+                    this.score.AddScore(100);
+                } else {
                     Debug.Log("Wrong destination !");
-                    score.AddScore(-50);
+                    this.score.AddScore(-50);
                 }
 
-                Destroy(collision.gameObject, destroyDelay);
+                Destroy(collision.gameObject, this.destroyDelay);
             }
         }
 
-        private IEnumerator OpenAnimation()
-        {
-            LeanTween.moveLocalY(door, door.transform.localPosition.y + 1.3f, 1f).setEaseOutBack();
-
-            yield return new WaitForSeconds(1f);
-
-            LeanTween.moveLocalZ(convoyers, convoyers.transform.localPosition.z - 1.5f, 1f).setEaseOutBack();
+        private void OpenAnimation() {
+            LeanTween.moveLocalY(this.door, this.door.transform.localPosition.y + 1.3f, 1f).setEaseOutBack();
+            LeanTween.moveLocalZ(this.convoyers, this.convoyers.transform.localPosition.z - 1.5f, 1f).setEaseOutBack().setDelay(1);
+        }
+        public void SetDestinationName(string destinationName) {
+            this.DestinationName = destinationName;
+            this.destinationText.text = destinationName;
         }
     }
 }

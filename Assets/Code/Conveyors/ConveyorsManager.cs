@@ -16,20 +16,20 @@ namespace Code.Conveyors {
         [field: SerializeField] private LayerMask ConveyorLayer;
         [field: SerializeField] private LayerMask ConveyorPlaneLayer;
         [field: SerializeField] private LayerMask GroundPlaneLayer;
-        private Conveyor Conveyor;
-        private Vector3 DragPositionStart;
 
         [field: SerializeField] private Conveyor ConveyorPrefab;
         [field: SerializeField] private Conveyor PhantomConveyor;
-        private Dictionary<Vector2Int, Conveyor> Conveyors;
 
         [field: SerializeField] private Mode Mode;
+        private Conveyor Conveyor;
+        private Dictionary<Vector2Int, Conveyor> Conveyors;
+        private Direction Direction;
+        private Vector3 DragPositionStart;
+        private LTDescr EnablePhantomTween, MovePhantomTween;
         private Mode MasterMode;
         private bool ModeLocked;
-        private Direction Direction;
-        private Vector2Int PhantomPosition;
-        private LTDescr EnablePhantomTween, MovePhantomTween;
         private bool PhantomEnabled;
+        private Vector2Int PhantomPosition;
 
         protected override void Start() {
             base.Start();
@@ -105,7 +105,10 @@ namespace Code.Conveyors {
 
             Hit<Plane>? hit = this.Raycast<Plane>(this.GroundPlaneLayer);
 
-            if (hit == null) throw new Exception("[ConveyorsRayCast:PlacementBehaviour] No plane hit");
+            if (hit == null) {
+                this.HidePhantom();
+                return;
+            }
 
             Vector3 point = hit.Value.RaycastHit.point;
             if (point.x < 0) point.x -= 1;
@@ -222,7 +225,7 @@ namespace Code.Conveyors {
         }
 
         private void NewPhantom() {
-            this.PhantomConveyor = Instantiate(this.ConveyorPrefab);
+            this.PhantomConveyor = Instantiate(this.ConveyorPrefab, this.transform);
             this.PhantomConveyor.EditorRotate(this.Direction);
             this.PhantomConveyor.SetPhantom(true);
             this.PhantomEnabled = false;
