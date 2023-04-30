@@ -11,14 +11,18 @@ namespace Code.Conveyors {
             this.GatherInputs();
 
             Hit<Box>? hit = this.Raycast<Box>(this.BoxLayer);
-            if (hit != null) {
-                if (hit.Value.Obj != this.Box) {
-                    if (this.Box != null) this.Box.ShowDestination();
+            if (hit != null)
+            {
+                if (hit.Value.Obj != this.Box)
+                {
+                    if (this.Box != null) this.Box.HideDestination();
                     this.Box = hit.Value.Obj;
                     this.Box.ShowDestination();
                 }
-            } else if (this.Box != null) {
-                if (this.Box != null) this.Box.HideDestination();
+            }
+            else if (this.Box != null)
+            {
+                this.Box.HideDestination();
                 this.Box = null;
             }
         }
