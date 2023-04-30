@@ -11,8 +11,11 @@ namespace Code.Conveyors {
 
         [field: SerializeField] private string[] DestinationNames;
 
+        public List<Destination> listDestinations { get; private set; }
+
         // Start is called before the first frame update
         private void Start() {
+            listDestinations = new();
             this.StartCoroutine(this.SpawnDestination());
         }
 
@@ -29,6 +32,8 @@ namespace Code.Conveyors {
                 newDestination.transform.SetParent(this.transform);
                 newDestination.SetDestinationName(destinationNames[0]);
                 destinationNames.RemoveAt(0);
+
+                listDestinations.Add(newDestination);
 
                 this.DestroyWalls(newDestination.gameObject);
 

@@ -6,18 +6,23 @@ namespace Code.Conveyors {
         [field: SerializeField] private LayerMask BoxLayer;
         private Box Box;
 
-        protected override void Update() {
+        protected override void Update()
+        {
             base.Update();
 
             Hit<Box>? hit = this.Raycast<Box>(this.BoxLayer);
-            if (hit != null) {
-                if (hit.Value.Obj != this.Box) {
-                    if (this.Box != null) this.Box.ShowDestination();
+            if (hit != null)
+            {
+                if (hit.Value.Obj != this.Box)
+                {
+                    if (this.Box != null) this.Box.HideDestination();
                     this.Box = hit.Value.Obj;
                     this.Box.ShowDestination();
                 }
-            } else if (this.Box != null) {
-                if (this.Box != null) this.Box.HideDestination();
+            }
+            else if (this.Box != null)
+            {
+                this.Box.HideDestination();
                 this.Box = null;
             }
         }

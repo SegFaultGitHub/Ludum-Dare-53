@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Code.Conveyors {
-    public class SpawnBoxes : MonoBehaviour {
+    public class MenuSpawnBoxes : MonoBehaviour {
 
         public List<Box> listOfBoxes;
         private readonly float destroyDelay = 6f;

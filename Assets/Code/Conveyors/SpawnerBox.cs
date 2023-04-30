@@ -11,6 +11,8 @@ namespace Code.Conveyors
         [SerializeField] private Box boxPrefab;
         [SerializeField] private bool spawnActivated = false;
         [SerializeField] private Transform spawnPos;
+        [SerializeField] private Transform parentBoxes;
+        [SerializeField] private SpawnDestinations spawnDestinations;
 
 
         // Start is called before the first frame update
@@ -30,7 +32,13 @@ namespace Code.Conveyors
         {
             while (spawnActivated)
             {
-                Box newBox = Instantiate(boxPrefab, spawnPos.position, spawnPos.rotation);
+                if (spawnDestinations.listDestinations != null && spawnDestinations.listDestinations.Count != 0)
+                {
+                    Box newBox = Instantiate(boxPrefab, spawnPos.position, spawnPos.rotation);
+                    newBox.SetDestination(Utils.Utils.Sample(this.spawnDestinations.listDestinations));
+
+                    newBox.transform.parent = parentBoxes.transform;
+                }
 
                 yield return new WaitForSeconds(speedSpawn);
             }
