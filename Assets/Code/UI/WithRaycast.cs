@@ -5,15 +5,11 @@ namespace Code.UI {
 
         private static readonly RaycastHit[] RAYCAST_HITS = new RaycastHit[10];
 
-        protected Camera Camera;
+        protected UnityEngine.Camera Camera;
         protected Vector2 MousePosition, MousePositionDelta;
 
         protected virtual void Start() {
-            this.Camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        }
-
-        protected virtual void Update() {
-            this.HandleInput();
+            this.Camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<UnityEngine.Camera>();
         }
 
         protected Hit<T>? Raycast<T>(LayerMask layer) {
@@ -54,7 +50,8 @@ namespace Code.UI {
             this.InputActions.Globals.Disable();
         }
 
-        private void HandleInput() {
+        protected virtual void GatherInputs() {
+            this.MousePositionDelta = this.MousePosition;
             this.MousePosition = this.InputActions.Globals.MousePosition.ReadValue<Vector2>();
             this.MousePositionDelta = this.MousePosition - this.MousePositionDelta;
         }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Code.Conveyors {
+namespace Code.Boxes {
     public class SpawnBoxes : MonoBehaviour {
 
         public List<Box> listOfBoxes;

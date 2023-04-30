@@ -1,23 +1,23 @@
 using Code.UI;
 using UnityEngine;
 
-namespace Code.Conveyors {
+namespace Code.Boxes {
     public class BoxesManager : WithRaycast {
         [field: SerializeField] private LayerMask BoxLayer;
         private Box Box;
 
-        protected override void Update() {
-            base.Update();
+        private void Update() {
+            this.GatherInputs();
 
             Hit<Box>? hit = this.Raycast<Box>(this.BoxLayer);
             if (hit != null) {
                 if (hit.Value.Obj != this.Box) {
-                    if (this.Box != null) this.Box.ShowDestination();
+                    if (this.Box != null) this.Box.HideDestination();
                     this.Box = hit.Value.Obj;
                     this.Box.ShowDestination();
                 }
             } else if (this.Box != null) {
-                if (this.Box != null) this.Box.HideDestination();
+                this.Box.HideDestination();
                 this.Box = null;
             }
         }

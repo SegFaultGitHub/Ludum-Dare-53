@@ -1,15 +1,16 @@
+using Code.Conveyors;
 using Code.UI;
 using TMPro;
 using UnityEngine;
 
-namespace Code.Conveyors {
+namespace Code.Boxes {
     public class BoxDestinationUI : MonoBehaviour, IWithWorldCanvas {
         [field: SerializeField] private Canvas Canvas;
         [field: SerializeField] private TMP_Text Text;
         private LTDescr Tween;
 
         private void Awake() {
-            this.Canvas.worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+            this.Canvas.worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<UnityEngine.Camera>();
             this.Canvas.gameObject.SetActive(false);
             this.Canvas.transform.localScale *= 0;
         }
@@ -27,7 +28,7 @@ namespace Code.Conveyors {
 
             this.Canvas.gameObject.SetActive(true);
             float duration = 1 - this.Canvas.transform.localScale.x;
-            this.Tween = LeanTween.scale(this.Canvas.gameObject, Vector3.one, duration * 0.25f)
+            this.Tween = LeanTween.scale(this.Canvas.gameObject, Vector3.one, duration * 0.15f)
                 .setEaseOutBack()
                 .setOnComplete(() => this.Tween = null);
         }
@@ -39,7 +40,7 @@ namespace Code.Conveyors {
             if (this.Tween != null) LeanTween.cancel(this.Tween.id);
 
             float duration = this.Canvas.transform.localScale.x;
-            this.Tween = LeanTween.scale(this.Canvas.gameObject, Vector3.zero, duration * 0.25f)
+            this.Tween = LeanTween.scale(this.Canvas.gameObject, Vector3.zero, duration * 0.15f)
                 .setEaseInBack()
                 .setOnComplete(
                     () => {
