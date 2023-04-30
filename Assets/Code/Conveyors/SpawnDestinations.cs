@@ -2,58 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Code.Conveyors
-{
-    public class SpawnDestinations : MonoBehaviour
-    {
-
+namespace Code.Conveyors {
+    public class SpawnDestinations : MonoBehaviour {
         public List<GameObject> destinationsSpawns;
-        private float durationBetweenSpawn = 5f;
         public Destination destinationPrefab;
-
         public LayerMask m_LayerMask;
+        private readonly float durationBetweenSpawn = 5f;
 
-        public int numberOfDestination = 0;
-
-
+        [field: SerializeField] private string[] DestinationNames;
 
         // Start is called before the first frame update
-        void Start()
-        {
-            StartCoroutine(SpawnDestination());
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+        private void Start() {
+            this.StartCoroutine(this.SpawnDestination());
         }
 
 
-        private IEnumerator SpawnDestination()
-        {
-            while (destinationsSpawns.Count > 0)
-            {
-                GameObject destinationPos = Utils.Utils.Sample(destinationsSpawns);
-                Destination newDestination = Instantiate(destinationPrefab, destinationPos.transform.position, destinationPos.transform.rotation);
+        private IEnumerator SpawnDestination() {
+            List<string> destinationNames = Utils.Utils.Sample(this.DestinationNames, this.destinationsSpawns.Count);
+            while (this.destinationsSpawns.Count > 0) {
+                GameObject destinationPos = Utils.Utils.Sample(this.destinationsSpawns);
+                Destination newDestination = Instantiate(
+                    this.destinationPrefab,
+                    destinationPos.transform.position,
+                    destinationPos.transform.rotation
+                );
+                newDestination.transform.SetParent(this.transform);
+                newDestination.SetDestinationName(destinationNames[0]);
+                destinationNames.RemoveAt(0);
 
-                newDestination.destinationId = numberOfDestination++;
+                this.DestroyWalls(newDestination.gameObject);
 
-                DestroyWalls(newDestination.gameObject);
+                this.destinationsSpawns.Remove(destinationPos);
 
-                destinationsSpawns.Remove(destinationPos);
-
-                yield return new WaitForSeconds(durationBetweenSpawn);
+                yield return new WaitForSeconds(this.durationBetweenSpawn);
             }
         }
 
-        private void DestroyWalls(GameObject _obj)
-        {
-            Collider[] hitColliders = Physics.OverlapBox(_obj.transform.position, _obj.transform.localScale / 2, Quaternion.identity, m_LayerMask);
+        private void DestroyWalls(GameObject _obj) {
+            Collider[] hitColliders = Physics.OverlapBox(
+                _obj.transform.position,
+                _obj.transform.localScale / 2,
+                Quaternion.identity,
+                this.m_LayerMask
+            );
 
             int i = 0;
-            while (i < hitColliders.Length)
-            {
+            while (i < hitColliders.Length) {
                 _obj.transform.rotation = hitColliders[i].gameObject.transform.rotation;
                 Destroy(hitColliders[i].gameObject);
                 i++;

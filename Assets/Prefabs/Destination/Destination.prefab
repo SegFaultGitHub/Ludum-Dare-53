@@ -174,9 +174,9 @@ MonoBehaviour:
   m_fontSize: 0.15
   m_fontSizeBase: 0.15
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 0.15
+  m_fontSizeMax: 18
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -412,9 +412,7 @@ MonoBehaviour:
   score: {fileID: 0}
   door: {fileID: 4788769358629481843}
   convoyers: {fileID: 8962644469774634896}
-  destinationImage: {fileID: 0}
-  destinationName: {fileID: 595550193009116266}
-  destinationId: 0
+  destinationText: {fileID: 5839483463423005320}
 --- !u!65 &156505509792012543
 BoxCollider:
   m_ObjectHideFlags: 0

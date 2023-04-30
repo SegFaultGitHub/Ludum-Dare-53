@@ -1,38 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ScoreManagement : MonoBehaviour
-{
+public class ScoreManagement : MonoBehaviour {
 
     [SerializeField] private int score;
 
     public TMP_Text scoreText;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        score = 0;
-        UpdateScore();
+    private void Start() {
+        this.score = 0;
+        this.UpdateScore();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    private void Update() { }
+
+    public void AddScore(float scoreToAdd) {
+        this.score = this.score + (int)scoreToAdd;
+
+        this.UpdateScore();
     }
 
-    public void AddScore(float scoreToAdd)
-    {
-        score = score + (int) scoreToAdd;
-
-        UpdateScore();
+    private void UpdateScore() {
+        this.scoreText.text = this.score.ToString();
     }
-
-    private void UpdateScore()
-    {
-        scoreText.text = score.ToString();
-    }
-
 }

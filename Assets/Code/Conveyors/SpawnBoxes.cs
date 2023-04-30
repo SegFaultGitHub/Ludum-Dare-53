@@ -2,37 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Code.Conveyors
-{
-    public class SpawnBoxes : MonoBehaviour
-    {
+namespace Code.Conveyors {
+    public class SpawnBoxes : MonoBehaviour {
 
         public List<Box> listOfBoxes;
-        private float spawnSpeed = 2f;
-        private float destroyDelay = 6f;
+        private readonly float destroyDelay = 6f;
+        private readonly float spawnSpeed = 2f;
 
-    // Start is called before the first frame update
-        void Start()
-        {
-            StartCoroutine(SpawnBox());
+        // Start is called before the first frame update
+        private void Start() {
+            this.StartCoroutine(this.SpawnBox());
         }
 
         // Update is called once per frame
-        void Update()
-        {
-
-        }
+        private void Update() { }
 
 
-        private IEnumerator SpawnBox()
-        {
-            while (true)
-            {
-                Box boxToCreate = Utils.Utils.Sample(listOfBoxes);
-                Box newBox = Instantiate(boxToCreate, transform.position, transform.rotation);
-                Destroy(newBox.gameObject, destroyDelay);
+        private IEnumerator SpawnBox() {
+            while (true) {
+                Box boxToCreate = Utils.Utils.Sample(this.listOfBoxes);
+                Box newBox = Instantiate(boxToCreate, this.transform.position, this.transform.rotation);
+                Destroy(newBox.gameObject, this.destroyDelay);
 
-                yield return new WaitForSeconds(spawnSpeed);
+                yield return new WaitForSeconds(this.spawnSpeed);
             }
         }
     }
