@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Code.Conveyors;
 using UnityEngine;
 
-namespace Code.Conveyors {
+namespace Code.Boxes {
     public class Box : MonoBehaviour {
 
         [field: SerializeField] private PhysicMaterial OnConveyorMaterial, OffConveyorMaterial;
