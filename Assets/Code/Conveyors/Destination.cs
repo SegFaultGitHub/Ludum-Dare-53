@@ -61,7 +61,7 @@ namespace Code.Conveyors
 
             yield return new WaitForSeconds(1f);
 
-            LeanTween.moveLocalZ(convoyers, convoyers.transform.localPosition.z - 2f, 1f).setEaseOutBack();
+            LeanTween.moveLocalZ(convoyers, convoyers.transform.localPosition.z - 1.5f, 1f).setEaseOutBack();
         }
     }
 }

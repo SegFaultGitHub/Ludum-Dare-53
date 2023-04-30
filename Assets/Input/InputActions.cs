@@ -63,6 +63,33 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mode: Edition"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7d70ee2-3351-4462-8223-33f4377841b4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mode: Placement"",
+                    ""type"": ""Button"",
+                    ""id"": ""023d1966-7f3f-44be-b1e2-503dbacec9b8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Mode: Destruction"",
+                    ""type"": ""Button"",
+                    ""id"": ""fcdd245d-776f-4cfc-9f3b-4609fc1fca55"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -74,6 +101,39 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Drag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""410672fb-1226-45d3-9b0e-cf0912f75c18"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mode: Edition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""537632ef-8f55-4ddc-8bbb-0b2a846c6b0f"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mode: Placement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3ca6857d-c314-4245-afa1-6733ec19fd76"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mode: Destruction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -94,6 +154,9 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         // Conveyors
         m_Conveyors = asset.FindActionMap("Conveyors", throwIfNotFound: true);
         m_Conveyors_Drag = m_Conveyors.FindAction("Drag", throwIfNotFound: true);
+        m_Conveyors_ModeEdition = m_Conveyors.FindAction("Mode: Edition", throwIfNotFound: true);
+        m_Conveyors_ModePlacement = m_Conveyors.FindAction("Mode: Placement", throwIfNotFound: true);
+        m_Conveyors_ModeDestruction = m_Conveyors.FindAction("Mode: Destruction", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -202,11 +265,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Conveyors;
     private List<IConveyorsActions> m_ConveyorsActionsCallbackInterfaces = new List<IConveyorsActions>();
     private readonly InputAction m_Conveyors_Drag;
+    private readonly InputAction m_Conveyors_ModeEdition;
+    private readonly InputAction m_Conveyors_ModePlacement;
+    private readonly InputAction m_Conveyors_ModeDestruction;
     public struct ConveyorsActions
     {
         private @InputActions m_Wrapper;
         public ConveyorsActions(@InputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Drag => m_Wrapper.m_Conveyors_Drag;
+        public InputAction @ModeEdition => m_Wrapper.m_Conveyors_ModeEdition;
+        public InputAction @ModePlacement => m_Wrapper.m_Conveyors_ModePlacement;
+        public InputAction @ModeDestruction => m_Wrapper.m_Conveyors_ModeDestruction;
         public InputActionMap Get() { return m_Wrapper.m_Conveyors; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -219,6 +288,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Drag.started += instance.OnDrag;
             @Drag.performed += instance.OnDrag;
             @Drag.canceled += instance.OnDrag;
+            @ModeEdition.started += instance.OnModeEdition;
+            @ModeEdition.performed += instance.OnModeEdition;
+            @ModeEdition.canceled += instance.OnModeEdition;
+            @ModePlacement.started += instance.OnModePlacement;
+            @ModePlacement.performed += instance.OnModePlacement;
+            @ModePlacement.canceled += instance.OnModePlacement;
+            @ModeDestruction.started += instance.OnModeDestruction;
+            @ModeDestruction.performed += instance.OnModeDestruction;
+            @ModeDestruction.canceled += instance.OnModeDestruction;
         }
 
         private void UnregisterCallbacks(IConveyorsActions instance)
@@ -226,6 +304,15 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             @Drag.started -= instance.OnDrag;
             @Drag.performed -= instance.OnDrag;
             @Drag.canceled -= instance.OnDrag;
+            @ModeEdition.started -= instance.OnModeEdition;
+            @ModeEdition.performed -= instance.OnModeEdition;
+            @ModeEdition.canceled -= instance.OnModeEdition;
+            @ModePlacement.started -= instance.OnModePlacement;
+            @ModePlacement.performed -= instance.OnModePlacement;
+            @ModePlacement.canceled -= instance.OnModePlacement;
+            @ModeDestruction.started -= instance.OnModeDestruction;
+            @ModeDestruction.performed -= instance.OnModeDestruction;
+            @ModeDestruction.canceled -= instance.OnModeDestruction;
         }
 
         public void RemoveCallbacks(IConveyorsActions instance)
@@ -259,5 +346,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     public interface IConveyorsActions
     {
         void OnDrag(InputAction.CallbackContext context);
+        void OnModeEdition(InputAction.CallbackContext context);
+        void OnModePlacement(InputAction.CallbackContext context);
+        void OnModeDestruction(InputAction.CallbackContext context);
     }
 }

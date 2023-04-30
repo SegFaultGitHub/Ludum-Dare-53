@@ -6,9 +6,14 @@ namespace Code.Conveyors {
         private Rigidbody Rigidbody;
         private List<Conveyor> ActiveConveyors;
 
+        private enum _State {
+            OnConveyor, OffConveyor, None
+        }
+
         [field: SerializeField] private PhysicMaterial OnConveyorMaterial, OffConveyorMaterial;
         [field: SerializeField] private float MaxSpeed = 1f;
-        private float Ratio => this.MaxSpeed / 20;
+        private float Ratio => this.MaxSpeed / 160;
+        private _State State;
 
         public int DestinationBox = 0;
 
@@ -18,17 +23,22 @@ namespace Code.Conveyors {
 
             //Assign destination to the box based on the number of Destination currently created
             DestinationBox = Random.Range(0, GameObject.FindFirstObjectByType<SpawnDestinations>().numberOfDestination);
+            this.State = _State.None;
         }
 
         private void FixedUpdate() {
+            _State previousState = this.State;
             if (this.ActiveConveyors.Count == 0) {
-                this.OffConveyor();
+                this.State = _State.OffConveyor;
+                this.OffConveyor(previousState);
             } else {
-                this.OnConveyor();
+                this.State = _State.OnConveyor;
+                this.OnConveyor(previousState);
             }
         }
 
-        private void OnConveyor() {
+        private void OnConveyor(_State previousState) {
+            if (previousState != _State.OnConveyor) this.AssignMaterial(this.OnConveyorMaterial);
             foreach (Conveyor conveyor in this.ActiveConveyors) {
                 this.Rigidbody.velocity += conveyor.GetForce() * this.MaxSpeed * this.Ratio;
             }
@@ -36,13 +46,20 @@ namespace Code.Conveyors {
             this.Rigidbody.velocity = Vector3.ClampMagnitude(this.Rigidbody.velocity, this.MaxSpeed);
         }
 
-        private void OffConveyor() {
+        private void OffConveyor(_State previousState) {
+            if (previousState != _State.OffConveyor) this.AssignMaterial(this.OffConveyorMaterial);
         }
 
         private void OnTriggerEnter(Collider other) {
             Conveyor conveyor = other.GetComponentInParent<Conveyor>();
             if (conveyor == null) return;
             this.ActiveConveyors.Add(conveyor);
+        }
+
+        private void AssignMaterial(PhysicMaterial material) {
+            foreach (Collider collider in this.GetComponents<Collider>()) {
+                collider.material = material;
+            }
         }
 
         private void OnTriggerExit(Collider other) {

@@ -9,7 +9,7 @@ namespace Code.Conveyors
 
         public List<GameObject> destinationsSpawns;
         private float durationBetweenSpawn = 5f;
-        public GameObject destinationPrefab;
+        public Destination destinationPrefab;
 
         public LayerMask m_LayerMask;
 
@@ -35,11 +35,11 @@ namespace Code.Conveyors
             while (destinationsSpawns.Count > 0)
             {
                 GameObject destinationPos = Utils.Utils.Sample(destinationsSpawns);
-                GameObject newDestination = Instantiate(destinationPrefab, destinationPos.transform.position, destinationPos.transform.rotation);
+                Destination newDestination = Instantiate(destinationPrefab, destinationPos.transform.position, destinationPos.transform.rotation);
 
-                newDestination.gameObject.GetComponent<Destination>().destinationId = numberOfDestination++;
+                newDestination.destinationId = numberOfDestination++;
 
-                DestroyWalls(newDestination);
+                DestroyWalls(newDestination.gameObject);
 
                 destinationsSpawns.Remove(destinationPos);
 
