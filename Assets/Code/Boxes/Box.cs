@@ -14,6 +14,7 @@ namespace Code.Boxes {
         private List<Conveyor> ActiveConveyors;
         private Rigidbody Rigidbody;
         private _State State;
+        public bool Scored { get; set; }
         private float Ratio => this.MaxSpeed / 160;
 
         private void Awake() {

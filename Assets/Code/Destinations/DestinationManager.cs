@@ -6,7 +6,9 @@ using UnityEngine;
 namespace Code.Destinations {
     public class DestinationManager : MonoBehaviour {
         private List<Destination> Destinations;
+        private List<Destination> EnabledDestinations;
         private const float IntervalDuration = 5f;
+        public bool Ready => this.EnabledDestinations.Count > 0;
 
         private static readonly string[] DestinationNames = {
             "Athens",
@@ -36,12 +38,14 @@ namespace Code.Destinations {
 
         private void Start() {
             this.Destinations = this.GetComponentsInChildren<Destination>().ToList();
+            this.EnabledDestinations = new List<Destination>();
             List<string> destinationNames = Utils.Utils.Sample(DestinationNames, this.Destinations.Count);
             this.EnableDestination(destinationNames);
         }
 
         private void EnableDestination(IList<string> destinationNames) {
             Destination destination = Utils.Utils.Sample(this.Destinations);
+            this.EnabledDestinations.Add(destination);
             this.Destinations.Remove(destination);
             destination.Enable();
             destination.SetDestinationName(destinationNames[0]);
@@ -51,7 +55,7 @@ namespace Code.Destinations {
         }
 
         public Destination GetRandomDestination() {
-            return Utils.Utils.Sample(this.Destinations.Where(d => d.Enabled).ToList());
+            return Utils.Utils.Sample(this.EnabledDestinations);
         }
     }
 }

@@ -57,7 +57,7 @@ MonoBehaviour:
   ConveyorPrefab: {fileID: 8543577266014659139, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
     type: 3}
   PhantomConveyor: {fileID: 0}
-  Mode: 3
+  Mode: 1
 --- !u!1 &2408836244522250997
 GameObject:
   m_ObjectHideFlags: 0

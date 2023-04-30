@@ -9,8 +9,7 @@ namespace Code.Conveyors {
     public enum Mode {
         Placement,
         Edition,
-        Destruction,
-        Camera
+        Destruction
     }
 
     public class ConveyorsManager : WithRaycast {
@@ -44,6 +43,8 @@ namespace Code.Conveyors {
         private void Update() {
             this.GatherInputs();
 
+            this.CameraBehaviour();
+
             if (this.Input.SwitchToDestruction) {
                 this.MasterMode = Mode.Destruction;
                 this.SwitchMode(Mode.Destruction);
@@ -53,9 +54,6 @@ namespace Code.Conveyors {
             } else if (this.Input.SwitchToPlacement) {
                 this.MasterMode = Mode.Placement;
                 this.SwitchMode(Mode.Placement);
-            } else if (this.Input.SwitchToCamera) {
-                this.MasterMode = Mode.Camera;
-                this.SwitchMode(Mode.Camera);
             }
 
             switch (this.Mode) {
@@ -67,9 +65,6 @@ namespace Code.Conveyors {
                     break;
                 case Mode.Destruction:
                     this.DestructionBehaviour();
-                    break;
-                case Mode.Camera:
-                    this.CameraBehaviour();
                     break;
                 default:
                     throw new Exception($"[ConveyorsRayCast:Update] Unexpected mode {this.Mode}");
@@ -93,7 +88,6 @@ namespace Code.Conveyors {
                         this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
                     break;
                 case Mode.Destruction:
-                case Mode.Camera:
                     if (this.Conveyor != null) this.Conveyor.HideArrow();
                     this.HidePhantom();
                     if (this.PhantomConveyor != null)
@@ -105,10 +99,6 @@ namespace Code.Conveyors {
         }
 
         private void PlacementBehaviour() {
-            if (this.Input.RotateCameraInProgress)
-                this.MoveCamera();
-            this.PerformMoveCamera();
-
             if (this.Input.DragPerformed && this.PhantomEnabled) {
                 this.Conveyor = this.PhantomConveyor;
                 this.Conveyor.ShowArrow();
@@ -147,10 +137,6 @@ namespace Code.Conveyors {
         }
 
         private void EditionBehaviour() {
-            if (this.Input.RotateCameraInProgress)
-                this.MoveCamera();
-            this.PerformMoveCamera();
-
             Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
             if (this.Input.DragPerformed && this.Conveyor != null) {
                 Hit<Plane>? planeHit = this.Raycast<Plane>(this.ConveyorPlaneLayer);
@@ -193,10 +179,6 @@ namespace Code.Conveyors {
         }
 
         private void DestructionBehaviour() {
-            if (this.Input.RotateCameraInProgress)
-                this.MoveCamera();
-            this.PerformMoveCamera();
-
             Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
             if (this.Input.DragPerformed && hit != null) this.DestroyConveyor(hit.Value.Obj);
         }
@@ -308,7 +290,6 @@ namespace Code.Conveyors {
             public bool SwitchToPlacement;
             public bool SwitchToEdition;
             public bool SwitchToDestruction;
-            public bool SwitchToCamera;
             // Camera
             public bool MoveCameraPerformed;
             public bool MoveCameraInProgress;
@@ -331,7 +312,6 @@ namespace Code.Conveyors {
                 SwitchToPlacement = false,
                 SwitchToEdition = false,
                 SwitchToDestruction = false,
-                SwitchToCamera = false,
                 // Camera
                 MoveCameraPerformed = false,
                 MoveCameraInProgress = false,
@@ -357,7 +337,6 @@ namespace Code.Conveyors {
                 SwitchToPlacement = this.InputActions.Conveyors.ModePlacement.WasPerformedThisFrame(),
                 SwitchToEdition = this.InputActions.Conveyors.ModeEdition.WasPerformedThisFrame(),
                 SwitchToDestruction = this.InputActions.Conveyors.ModeDestruction.WasPerformedThisFrame(),
-                SwitchToCamera = this.InputActions.Conveyors.ModeCamera.WasPerformedThisFrame(),
                 // Camera
                 MoveCameraPerformed = this.InputActions.Camera.MoveCamera.WasPerformedThisFrame(),
                 MoveCameraInProgress = this.Input.MoveCameraInProgress,

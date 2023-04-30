@@ -1,21 +1,22 @@
+using System.Collections.Generic;
 using Code.Destinations;
 using Code.Extensions;
 using UnityEngine;
 
 namespace Code.Boxes {
-    public class SpawnerBox : MonoBehaviour {
-        [field: SerializeField] private float SpawnInterval = 3f;
-        [field: SerializeField] private Box BoxPrefab;
-        [field: SerializeField] private bool Enabled;
-        [field: SerializeField] private Transform SpawnPosition;
+    public class BoxSpawner : MonoBehaviour {
+        [field: SerializeField] protected float SpawnInterval = 3f;
+        [field: SerializeField] protected Box BoxPrefab;
+        [field: SerializeField] protected bool Enabled;
+        [field: SerializeField] protected List<Transform> SpawnPositions;
         [field: SerializeField] private Transform BoxesParent;
         [field: SerializeField] private DestinationManager DestinationManager;
 
         private void Start() => this.SpawnBox();
 
-        private void SpawnBox() {
-            if (this.Enabled) {
-                Box box = Instantiate(this.BoxPrefab, this.SpawnPosition.position, Quaternion.identity);
+        protected virtual void SpawnBox() {
+            if (this.Enabled && this.DestinationManager.Ready) {
+                Box box = Instantiate(this.BoxPrefab, Utils.Utils.Sample(this.SpawnPositions).position, Quaternion.identity);
                 box.transform.SetParent(this.BoxesParent);
                 box.SetDestination(this.DestinationManager.GetRandomDestination());
             }
