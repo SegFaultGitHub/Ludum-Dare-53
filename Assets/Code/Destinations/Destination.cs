@@ -28,12 +28,18 @@ namespace Code.Destinations {
         }
 
         private void OnTriggerEnter(Collider collision) {
+            if (!this.Enabled) return;
+
             Box box = collision.gameObject.GetComponent<Box>();
             if (box == null || box.Scored) return;
 
             box.Scored = true;
             this.ScoreManagement.AddScore(box.Destination == this ? 100 : -50);
             LeanTween.scale(box.gameObject, Vector3.zero, .5f).setDelay(1).setDestroyOnComplete(true);
+        }
+
+        public void Disable() {
+            this.Enabled = false;
         }
     }
 }

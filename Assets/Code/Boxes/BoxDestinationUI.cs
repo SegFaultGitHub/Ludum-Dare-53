@@ -25,7 +25,10 @@ namespace Code.Boxes {
         }
 
         public void Open() {
-            if (this.Tween != null) LeanTween.cancel(this.Tween.id);
+            if (this.Tween != null) {
+                LeanTween.cancel(this.Tween.id);
+                this.Tween = null;
+            }
 
             this.Canvas.gameObject.SetActive(true);
             float duration = 1 - this.Canvas.transform.localScale.x;
@@ -38,7 +41,10 @@ namespace Code.Boxes {
             if (!this.Canvas.gameObject.activeSelf)
                 return;
 
-            if (this.Tween != null) LeanTween.cancel(this.Tween.id);
+            if (this.Tween != null) {
+                LeanTween.cancel(this.Tween.id);
+                this.Tween = null;
+            }
 
             float duration = this.Canvas.transform.localScale.x;
             this.Tween = LeanTween.scale(this.Canvas.gameObject, Vector3.zero, duration * 0.15f)

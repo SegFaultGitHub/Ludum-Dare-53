@@ -5,11 +5,11 @@ namespace Code.UI {
 
         private static readonly RaycastHit[] RAYCAST_HITS = new RaycastHit[10];
 
-        protected UnityEngine.Camera Camera;
+        protected Camera Camera;
         protected Vector2 MousePosition, MousePositionDelta;
 
         protected virtual void Start() {
-            this.Camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<UnityEngine.Camera>();
+            this.Camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         }
 
         protected Hit<T>? Raycast<T>(LayerMask layer) {
