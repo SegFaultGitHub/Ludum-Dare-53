@@ -10,9 +10,14 @@ namespace Code.Conveyors {
         [field: SerializeField] private float MaxSpeed = 1f;
         private float Ratio => this.MaxSpeed / 20;
 
+        public int DestinationBox = 0;
+
         private void Awake() {
             this.ActiveConveyors = new List<Conveyor>();
             this.Rigidbody = this.GetComponent<Rigidbody>();
+
+            //Assign destination to the box based on the number of Destination currently created
+            DestinationBox = Random.Range(0, GameObject.FindFirstObjectByType<SpawnDestinations>().numberOfDestination);
         }
 
         private void FixedUpdate() {

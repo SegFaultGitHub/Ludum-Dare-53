@@ -13,6 +13,8 @@ namespace Code.Conveyors
 
         public LayerMask m_LayerMask;
 
+        public int numberOfDestination = 0;
+
 
 
         // Start is called before the first frame update
@@ -34,6 +36,8 @@ namespace Code.Conveyors
             {
                 GameObject destinationPos = Utils.Utils.Sample(destinationsSpawns);
                 GameObject newDestination = Instantiate(destinationPrefab, destinationPos.transform.position, destinationPos.transform.rotation);
+
+                newDestination.gameObject.GetComponent<Destination>().destinationId = numberOfDestination++;
 
                 DestroyWalls(newDestination);
 

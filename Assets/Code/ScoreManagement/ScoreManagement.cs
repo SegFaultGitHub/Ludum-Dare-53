@@ -23,9 +23,8 @@ public class ScoreManagement : MonoBehaviour
         
     }
 
-    public void AddScore()
+    public void AddScore(float scoreToAdd)
     {
-        var scoreToAdd = 100f;
         score = score + (int) scoreToAdd;
 
         UpdateScore();

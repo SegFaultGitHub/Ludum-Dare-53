@@ -1,45 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class Destination : MonoBehaviour
+namespace Code.Conveyors
 {
-
-    public ScoreManagement score;
-    private float destroyDelay = 3f;
-
-    public GameObject door;
-    public GameObject convoyers;
-
-    // Start is called before the first frame update
-    void Start()
+    public class Destination : MonoBehaviour
     {
-        score = GameObject.FindGameObjectWithTag("ScoreManagement").GetComponent<ScoreManagement>();
-        StartCoroutine(OpenAnimation());
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        public ScoreManagement score;
+        private float destroyDelay = 3f;
 
-    public void OnTriggerEnter(Collider collision)
-    {
-        if (collision.gameObject.CompareTag("Box"))
+        public GameObject door;
+        public GameObject convoyers;
+
+        public GameObject destinationImage;
+        public TMP_Text destinationName;
+
+        public int destinationId;
+
+        // Start is called before the first frame update
+        void Start()
         {
-            Debug.Log("Box delivered !");
-            score.AddScore();
-            Destroy(collision.gameObject, destroyDelay);
+            score = GameObject.FindGameObjectWithTag("ScoreManagement").GetComponent<ScoreManagement>();
+
+
+            StartCoroutine(OpenAnimation());
         }
-    }
 
-    private IEnumerator OpenAnimation()
-    {
-        LeanTween.moveLocalY(door, door.transform.localPosition.y + 1.3f, 1f).setEaseOutBack();
+        // Update is called once per frame
+        void Update()
+        {
 
-        yield return new WaitForSeconds(1f);
+        }
 
-        LeanTween.moveLocalZ(convoyers, convoyers.transform.localPosition.z - 2f, 1f).setEaseOutBack();
+        public void OnTriggerEnter(Collider collision)
+        {
+            if (collision.gameObject.CompareTag("Box"))
+            {
+                Box _box = collision.gameObject.GetComponent<Box>();
+
+                if (_box.DestinationBox == destinationId)
+                {
+                    Debug.Log("Box delivered !");
+                    score.AddScore(100);
+                }
+                else
+                {
+                    Debug.Log("Wrong destination !");
+                    score.AddScore(-50);
+                }
+
+                Destroy(collision.gameObject, destroyDelay);
+            }
+        }
+
+        private IEnumerator OpenAnimation()
+        {
+            LeanTween.moveLocalY(door, door.transform.localPosition.y + 1.3f, 1f).setEaseOutBack();
+
+            yield return new WaitForSeconds(1f);
+
+            LeanTween.moveLocalZ(convoyers, convoyers.transform.localPosition.z - 2f, 1f).setEaseOutBack();
+        }
     }
 }

@@ -10089,6 +10089,7 @@ MonoBehaviour:
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 1
+  numberOfDestination: 0
 --- !u!4 &1353719787
 Transform:
   m_ObjectHideFlags: 0
