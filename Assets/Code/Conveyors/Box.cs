@@ -15,9 +15,14 @@ namespace Code.Conveyors {
         private float Ratio => this.MaxSpeed / 160;
         private _State State;
 
+        public int DestinationBox = 0;
+
         private void Awake() {
             this.ActiveConveyors = new List<Conveyor>();
             this.Rigidbody = this.GetComponent<Rigidbody>();
+
+            //Assign destination to the box based on the number of Destination currently created
+            DestinationBox = Random.Range(0, GameObject.FindFirstObjectByType<SpawnDestinations>().numberOfDestination);
             this.State = _State.None;
         }
 
