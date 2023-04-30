@@ -77,13 +77,7 @@ namespace Code {
         }
 
         public Vector3 GetForce() {
-            return this.Direction switch {
-                Direction.Up => new Vector3(0, 0, 1),
-                Direction.Down => new Vector3(0, 0, -1),
-                Direction.Left => new Vector3(-1, 0, 0),
-                Direction.Right => new Vector3(1, 0, 0),
-                _ => throw new Exception($"[Conveyor:ApplyForce] Unexpected direction {this.Direction}")
-            };
+            return this.PhysicsCollider.transform.right;
         }
 
         public void SetPhantom(bool phantom) {
