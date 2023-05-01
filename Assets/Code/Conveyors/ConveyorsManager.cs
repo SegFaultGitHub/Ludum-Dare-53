@@ -18,7 +18,7 @@ namespace Code.Conveyors {
         [field: SerializeField] private LayerMask GroundPlaneLayer;
 
         [field: SerializeField] private Conveyor ConveyorPrefab;
-        [field: SerializeField] private Conveyor PhantomConveyor;
+        private Conveyor PhantomConveyor;
 
         private Vector3 CameraVelocity;
         private Vector2 CameraAngleVelocity;
@@ -192,7 +192,6 @@ namespace Code.Conveyors {
             this.PerformMoveCamera();
             this.PerformRotateCamera();
         }
-
 
         private void PerformMoveCamera() {
             if (this.CameraVelocity.sqrMagnitude == 0)

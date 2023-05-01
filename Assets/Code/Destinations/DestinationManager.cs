@@ -7,7 +7,7 @@ namespace Code.Destinations {
     public class DestinationManager : MonoBehaviour {
         private List<Destination> Destinations;
         private List<Destination> EnabledDestinations;
-        private const float IntervalDuration = 5f;
+        [field: SerializeField] private float IntervalDuration;
         public bool Ready => this.EnabledDestinations.Count > 0;
 
         private static readonly string[] DestinationNames = {
@@ -51,7 +51,7 @@ namespace Code.Destinations {
             destination.SetDestinationName(destinationNames[0]);
             destinationNames.RemoveAt(0);
 
-            if (this.Destinations.Count > 0) this.InSeconds(IntervalDuration, () => this.EnableDestination(destinationNames));
+            if (this.Destinations.Count > 0) this.InSeconds(this.IntervalDuration, () => this.EnableDestination(destinationNames));
         }
 
         public Destination GetRandomDestination() {
