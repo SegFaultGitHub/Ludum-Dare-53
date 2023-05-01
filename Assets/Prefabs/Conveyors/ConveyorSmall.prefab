@@ -250,6 +250,7 @@ MonoBehaviour:
   Models: {fileID: 1569078429498748402}
   MoveTrigger: {fileID: 1779016304785592435}
   PhysicsCollider: {fileID: 5433384410845625419}
+  OutlineColor: {r: 1, g: 1, b: 1, a: 0}
 --- !u!1 &5433384410845625419
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,7 +910,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 8c7c23b285b09ea4f82e3fbb09905f7e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5
+      value: 1.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8c7c23b285b09ea4f82e3fbb09905f7e,
         type: 3}
