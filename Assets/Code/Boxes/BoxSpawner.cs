@@ -21,7 +21,7 @@ namespace Code.Boxes {
         private void Start() => this.InSeconds(this.InitialDelay, this.SpawnBox);
 
         private void Update() {
-            if (this.Elapsed >= this.InitialDelay) return;
+            if (this.Elapsed > this.InitialDelay) return;
 
             int seconds = (int) Mathf.Max(Mathf.Floor(this.InitialDelay - this.Elapsed), 0);
 
