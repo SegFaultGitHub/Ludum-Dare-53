@@ -8557,7 +8557,7 @@ PrefabInstance:
     - target: {fileID: 8727680924071095859, guid: d6fe73e60734fca43831c05dc5779ff0,
         type: 3}
       propertyPath: Duration
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8727680924071095859, guid: d6fe73e60734fca43831c05dc5779ff0,
         type: 3}
