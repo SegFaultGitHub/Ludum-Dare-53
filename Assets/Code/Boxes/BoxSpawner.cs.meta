@@ -3,7 +3,12 @@ guid: 0845d4083f480eb45a6d139d6cbd72ee
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - BoxPrefab: {fileID: 7047360414319687732, guid: 8c5c6880f3193bb43b14817b2fd78224,
+      type: 3}
+  - BoxesParent: {instanceID: 0}
+  - DestinationManager: {instanceID: 0}
+  - CountdownText: {instanceID: 0}
   executionOrder: 200
   icon: {instanceID: 0}
   userData: 

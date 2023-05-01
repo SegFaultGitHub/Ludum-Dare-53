@@ -25,10 +25,10 @@ namespace Code.Boxes {
 
             int seconds = (int) Mathf.Max(Mathf.Floor(this.InitialDelay - this.Elapsed), 0);
 
-            this.CountdownText.text = $"{seconds}";
+            if (this.CountdownText != null) this.CountdownText.text = $"{seconds}";
             this.Elapsed += Time.deltaTime;
 
-            if (this.Elapsed >= this.InitialDelay) this.CountdownText.text = "--";
+            if (this.Elapsed >= this.InitialDelay && this.CountdownText != null) this.CountdownText.text = "--";
         }
 
         protected virtual void SpawnBox() {
