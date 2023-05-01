@@ -2081,6 +2081,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2dde49e1a1e439a8526994de84fb5eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IntervalDuration: 0
 --- !u!1001 &447412512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9373,7 +9374,7 @@ PrefabInstance:
     - target: {fileID: 7850262213855672137, guid: d6fe73e60734fca43831c05dc5779ff0,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8421279996976527788, guid: d6fe73e60734fca43831c05dc5779ff0,
         type: 3}

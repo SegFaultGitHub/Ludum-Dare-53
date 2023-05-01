@@ -3,16 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour {
 
-    public GameObject settingsMenu;
+    public GameObject creditsMenu;
     public GameObject levelsSelectionMenu;
 
-    private bool settingsOpen;
+    private bool creditsOpen;
     private bool levelSelectionOpen;
 
     private void Start() {
-        this.settingsOpen = false;
+        this.creditsOpen = false;
         levelSelectionOpen = false;
-        this.settingsMenu.SetActive(this.settingsOpen);
+        this.creditsMenu.SetActive(this.creditsOpen);
         this.levelsSelectionMenu.SetActive(this.levelSelectionOpen);
     }
 
@@ -24,9 +24,9 @@ public class Menus : MonoBehaviour {
         Application.Quit();
     }
 
-    public void SettingsMenu() {
-        this.settingsOpen = !this.settingsOpen;
-        this.settingsMenu.SetActive(this.settingsOpen);
+    public void CreditsMenu() {
+        this.creditsOpen = !this.creditsOpen;
+        this.creditsMenu.SetActive(this.creditsOpen);
     }
 
     public void LevelsSelectionMenu()

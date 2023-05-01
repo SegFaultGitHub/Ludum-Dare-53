@@ -7,7 +7,7 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance;
     
     [HideInInspector] public float volume;
-    [SerializeField] private AudioSource _musicSource, _effetSource;
+    [SerializeField] private AudioSource _musicSource, _effetSource, _ambianceSource;
 
     private void Awake()
     {
@@ -42,6 +42,22 @@ public class SoundManager : MonoBehaviour
         }
         _musicSource.clip = clip;
         _musicSource.Play();
+    }
+
+    public void PlayAmbiance(AudioClip clip)
+    {
+        if (clip == null)
+        {
+            Debug.Log("ERROR : No music clip found");
+            return;
+        }
+        _ambianceSource.clip = clip;
+        _ambianceSource.Play();
+    }
+
+    public void StopAmbiance()
+    {
+        _ambianceSource.Stop();
     }
 
     public void ChangeMasterVolume(float value)
