@@ -13,6 +13,8 @@ namespace Code.Timer {
         [field: SerializeField] private DestinationManager DestinationManager;
         [field: SerializeField] private List<BoxSpawner> Spawners;
 
+        [field: SerializeField] private GameOverMenu GameOverMenu;
+
         private void Update() {
             if (this.Elapsed >= this.Duration) return;
             int minutes = (int) Mathf.Max(Mathf.Floor((this.Duration - this.Elapsed) / 60), 0);
@@ -24,6 +26,8 @@ namespace Code.Timer {
             if (this.Elapsed >= this.Duration) {
                 this.DestinationManager.Disable();
                 this.Spawners.ForEach(s => s.Disable());
+
+                this.GameOverMenu.GameOver();
             }
         }
     }
