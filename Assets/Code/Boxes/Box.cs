@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Code.Conveyors;
 using Code.Destinations;
 using UnityEngine;
 
@@ -16,6 +15,7 @@ namespace Code.Boxes {
         private _State State;
         public bool Scored { get; set; }
         private float Ratio => this.MaxSpeed / 160;
+        private bool Grounded;
 
         private void Awake() {
             this.ActiveConveyors = new List<Conveyor>();
@@ -47,6 +47,7 @@ namespace Code.Boxes {
         }
 
         private void OnConveyor(_State previousState) {
+            this.Grounded = false;
             if (previousState != _State.OnConveyor) this.AssignMaterial(this.OnConveyorMaterial);
             foreach (Conveyor conveyor in this.ActiveConveyors) {
                 this.Rigidbody.velocity += conveyor.GetForce() * this.MaxSpeed * this.Ratio;
@@ -56,6 +57,7 @@ namespace Code.Boxes {
         }
 
         private void OffConveyor(_State previousState) {
+            this.Grounded = true;
             if (previousState != _State.OffConveyor) this.AssignMaterial(this.OffConveyorMaterial);
         }
 
@@ -64,7 +66,9 @@ namespace Code.Boxes {
             this.BoxDestinationUI.SetDestination(destination);
         }
 
-        public void ShowDestination() => this.BoxDestinationUI.Open();
+        public void ShowDestination() {
+            if (!this.Grounded) this.BoxDestinationUI.Open();
+        }
         public void HideDestination() => this.BoxDestinationUI.Close();
 
 

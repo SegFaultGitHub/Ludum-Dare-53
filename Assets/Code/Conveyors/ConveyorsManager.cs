@@ -78,17 +78,17 @@ namespace Code.Conveyors {
 
             switch (this.Mode) {
                 case Mode.Placement:
-                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    if (this.Conveyor != null) this.Conveyor.DisableHighlight();
                     this.NewPhantom();
                     break;
                 case Mode.Edition:
-                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    if (this.Conveyor != null) this.Conveyor.DisableHighlight();
                     this.HidePhantom();
                     if (this.PhantomConveyor != null)
                         this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
                     break;
                 case Mode.Destruction:
-                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    if (this.Conveyor != null) this.Conveyor.DisableHighlight();
                     this.HidePhantom();
                     if (this.PhantomConveyor != null)
                         this.Until(() => this.EnablePhantomTween == null, () => Destroy(this.PhantomConveyor.gameObject));
@@ -101,7 +101,7 @@ namespace Code.Conveyors {
         private void PlacementBehaviour() {
             if (this.Input.DragPerformed && this.PhantomEnabled) {
                 this.Conveyor = this.PhantomConveyor;
-                this.Conveyor.ShowArrow();
+                this.Conveyor.EnableHighlight();
                 this.Conveyor.GridPosition = this.PhantomPosition;
                 this.Mode = Mode.Edition;
                 this.EditionBehaviour();
@@ -162,18 +162,18 @@ namespace Code.Conveyors {
                 this.Conveyor.ApplyRotation();
                 this.Direction = this.Conveyor.Direction;
                 this.Place(this.Conveyor);
-                this.Conveyor.HideArrow();
+                this.Conveyor.DisableHighlight();
                 this.Conveyor.SetPhantom(false);
                 this.Conveyor = null;
                 this.SwitchMode(this.MasterMode);
             } else if (hit != null) {
                 if (hit.Value.Obj != this.Conveyor) {
-                    if (this.Conveyor != null) this.Conveyor.HideArrow();
+                    if (this.Conveyor != null) this.Conveyor.DisableHighlight();
                     this.Conveyor = hit.Value.Obj;
-                    this.Conveyor.ShowArrow();
+                    this.Conveyor.EnableHighlight();
                 }
             } else if (this.Conveyor != null) {
-                if (this.Conveyor != null) this.Conveyor.HideArrow();
+                if (this.Conveyor != null) this.Conveyor.DisableHighlight();
                 this.Conveyor = null;
             }
         }

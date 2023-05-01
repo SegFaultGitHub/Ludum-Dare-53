@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Code.Extensions;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Code {
@@ -17,17 +19,46 @@ namespace Code {
         [field: SerializeField] private GameObject MoveTrigger;
         [field: SerializeField] private GameObject PhysicsCollider;
         private Vector3 InitialArrowScale;
+        private float InitialY;
 
-        private LTDescr RotateTween, ArrowTween;
+        private LTDescr RotateTween, ArrowTween, OutlineTween;
         public Vector2Int GridPosition { get; set; }
-        public bool Phantom { get; set; }
+        private bool Phantom { get; set; }
+        [field: SerializeField] private Color OutlineColor;
 
         private void Awake() {
             this.InitialArrowScale = this.Arrow.transform.localScale;
             this.Arrow.transform.localScale *= 0;
+            this.InitialY = this.Models.transform.position.y;
         }
 
-        public void HideArrow() {
+        public void EnableHighlight() {
+            this.ShowArrow();
+            if (!this.Locked) this.EnableOutline();
+        }
+
+        public void DisableHighlight() {
+            this.HideArrow();
+            if (!this.Locked) this.DisableOutline();
+        }
+
+        private void EnableOutline() {
+            if (this.OutlineTween != null) LeanTween.cancel(this.OutlineTween.id);
+
+            this.OutlineTween = LeanTween.moveY(this.Models, this.InitialY + 0.25f, 0.2f)
+                .setEaseOutBack()
+                .setOnComplete(() => this.OutlineTween = null);
+        }
+
+        private void DisableOutline() {
+            if (this.OutlineTween != null) LeanTween.cancel(this.OutlineTween.id);
+
+            this.OutlineTween = LeanTween.moveY(this.Models, this.InitialY, 0.2f)
+                .setEaseInBack()
+                .setOnComplete(() => this.OutlineTween = null);
+        }
+
+        private void HideArrow() {
             if (this.ArrowTween != null) {
                 LeanTween.cancel(this.ArrowTween.id);
                 this.ArrowTween = null;
@@ -38,7 +69,7 @@ namespace Code {
                 .setOnComplete(() => this.ArrowTween = null);
         }
 
-        public void ShowArrow() {
+        private void ShowArrow() {
             if (this.ArrowTween != null) {
                 LeanTween.cancel(this.ArrowTween.id);
                 this.ArrowTween = null;
