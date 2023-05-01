@@ -1749,6 +1749,11 @@ PrefabInstance:
       propertyPath: DisplayedDirection
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8543577266014659139, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
+        type: 3}
+      propertyPath: <Locked>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8553634629120823637, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -4113,6 +4118,11 @@ PrefabInstance:
       propertyPath: DisplayedDirection
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8543577266014659139, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
+        type: 3}
+      propertyPath: <Locked>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8553634629120823637, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -5581,6 +5591,11 @@ PrefabInstance:
       propertyPath: DisplayedDirection
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8543577266014659139, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
+        type: 3}
+      propertyPath: <Locked>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8553634629120823637, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -6533,6 +6548,11 @@ PrefabInstance:
     - target: {fileID: 8543577266014659139, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
         type: 3}
       propertyPath: DisplayedDirection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8543577266014659139, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
+        type: 3}
+      propertyPath: <Locked>k__BackingField
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8553634629120823637, guid: 2a1fdf77763128c4f8e6fd0415c6447f,
@@ -11509,13 +11529,13 @@ Transform:
   - {fileID: 1233599325}
   - {fileID: 1056495798}
   - {fileID: 450429147}
+  - {fileID: 888282875}
   - {fileID: 184111464}
   - {fileID: 652880971}
-  - {fileID: 888282875}
+  - {fileID: 926708039}
+  - {fileID: 244097671}
   - {fileID: 389083139}
   - {fileID: 1536091687}
-  - {fileID: 244097671}
-  - {fileID: 926708039}
   m_Father: {fileID: 7582924687056498996}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

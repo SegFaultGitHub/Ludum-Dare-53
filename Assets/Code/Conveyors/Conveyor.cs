@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Code.Extensions;
-using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Code {
+namespace Code.Conveyors {
     public enum Direction {
         Up, Down, Left, Right
     }
 
     public class Conveyor : MonoBehaviour {
-        [field: SerializeField] private bool Locked;
+        [field: SerializeField] public bool Locked { private set; get; }
         [field: SerializeField] private int Length;
         [field: SerializeField] public Direction Direction;
         [field: SerializeField] private Direction DisplayedDirection;
@@ -24,7 +22,6 @@ namespace Code {
         private LTDescr RotateTween, ArrowTween, OutlineTween;
         public Vector2Int GridPosition { get; set; }
         private bool Phantom { get; set; }
-        [field: SerializeField] private Color OutlineColor;
 
         private void Awake() {
             this.InitialArrowScale = this.Arrow.transform.localScale;

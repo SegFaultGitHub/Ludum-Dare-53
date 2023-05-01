@@ -180,7 +180,18 @@ namespace Code.Conveyors {
 
         private void DestructionBehaviour() {
             Hit<Conveyor>? hit = this.Raycast<Conveyor>(this.ConveyorLayer);
-            if (this.Input.DragPerformed && hit != null) this.DestroyConveyor(hit.Value.Obj);
+            if (this.Input.DragPerformed && hit != null) {
+                this.DestroyConveyor(hit.Value.Obj);
+            } else if (hit != null) {
+                if (hit.Value.Obj != this.Conveyor) {
+                    if (this.Conveyor != null) this.Conveyor.DisableHighlight();
+                    this.Conveyor = hit.Value.Obj;
+                    this.Conveyor.EnableHighlight();
+                }
+            } else if (this.Conveyor != null) {
+                if (this.Conveyor != null) this.Conveyor.DisableHighlight();
+                this.Conveyor = null;
+            }
         }
 
         private void CameraBehaviour() {
@@ -229,6 +240,7 @@ namespace Code.Conveyors {
         }
 
         private void DestroyConveyor(Conveyor conveyor) {
+            if (conveyor.Locked) return;
             List<Vector2Int> gridPositions = this.Conveyors.Keys.Where(k => this.Conveyors[k] == conveyor).ToList();
             foreach (Vector2Int gridPosition in gridPositions) {
                 this.Conveyors.Remove(gridPosition);

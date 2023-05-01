@@ -3,13 +3,15 @@ using UnityEngine;
 
 public class ScoreManagement : MonoBehaviour {
 
-    [SerializeField] private int score;
+    [field: SerializeField] public int score { get; private set; }
+    [field: SerializeField] public int minScore { get; private set; }
+    [field: SerializeField] public int maxScore { get; private set; }
+    
 
     public TMP_Text scoreText;
 
     // Start is called before the first frame update
     private void Start() {
-        this.score = 0;
         this.UpdateScore();
     }
 
